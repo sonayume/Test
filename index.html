@@ -4,845 +4,566 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#11120f">
-<title>EY | Executive Intelligence</title>
-
+<title>Executive Financial Dashboard</title>
 <style>
 :root{
-  --bg:#10110f;
-  --panel:#191a17;
-  --panel2:#20211d;
-  --line:rgba(255,255,255,.085);
-  --text:#f5f5ef;
-  --muted:#92948a;
-  --yellow:#ffe600;
-  --green:#79e2ae;
-  --red:#ff8282;
-  --blue:#a5c5ff;
-  --radius:19px;
+  --bg:#0b0d0c;--panel:#111412;--panel2:#151815;
+  --border:#292e2b;--yellow:#ffe600;--text:#f2f4f0;
+  --muted:#929a94;--green:#42e5a2;--red:#ff6474;
+  --blue:#83aaff;--radius:14px;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{
-  margin:0;background:var(--bg);color:var(--text);
-  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-  font-size:13px;line-height:1.5;overflow-x:hidden;
-}
+body{margin:0;background:var(--bg);color:var(--text);
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+font-size:13px;overflow:hidden}
 button,input,select{font:inherit}
 button{cursor:pointer}
-button:focus-visible,input:focus-visible,select:focus-visible{
-  outline:2px solid var(--yellow);outline-offset:3px
-}
-::selection{background:var(--yellow);color:#111}
-button,select{color:inherit}
-button:disabled{opacity:.4;cursor:not-allowed}
-.ambient{
-  position:fixed;inset:0;pointer-events:none;z-index:-1;overflow:hidden
-}
-.ambient:before,.ambient:after{
-  content:"";position:absolute;border-radius:50%;filter:blur(100px);
-  opacity:.11;animation:float 13s ease-in-out infinite alternate
-}
-.ambient:before{width:420px;height:420px;background:#e6d000;top:-250px;left:28%}
-.ambient:after{width:350px;height:350px;background:#65774b;bottom:-180px;right:-100px;animation-delay:-6s}
-@keyframes float{to{transform:translate(65px,55px) scale(1.2)}}
-@keyframes appear{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
-@keyframes shine{0%{transform:translateX(-130%)}100%{transform:translateX(240%)}}
-@keyframes pulse{0%,100%{opacity:.65}50%{opacity:1}}
-@keyframes countup{from{opacity:.3}to{opacity:1}}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-.topbar{
-  height:72px;position:sticky;top:0;z-index:20;
-  background:rgba(16,17,15,.87);backdrop-filter:blur(22px);
-  border-bottom:1px solid var(--line);display:flex;align-items:center;
-  justify-content:space-between;padding:0 35px;gap:20px
-}
-.brand{display:flex;align-items:center;gap:15px}
-.logo{font-weight:1000;font-size:31px;letter-spacing:-3px;color:var(--yellow);line-height:1}
-.brand-divider{height:31px;width:1px;background:#444}
-.brand-title{font-weight:650;font-size:12px;letter-spacing:.6px}
-.brand-sub{font-size:9px;color:var(--muted);letter-spacing:1.8px;margin-top:3px}
-.top-actions{display:flex;align-items:center;gap:12px}
-.live{display:flex;align-items:center;gap:7px;color:#b4b8ab;font-size:10px}
-.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px #79e2ae;animation:pulse 2s infinite}
-.icon-btn{
-  width:36px;height:36px;display:grid;place-items:center;border-radius:11px;
-  background:var(--panel);border:1px solid var(--line);color:var(--text);
-  transition:.25s
-}
-.icon-btn:hover{border-color:var(--yellow);transform:translateY(-2px);color:var(--yellow)}
-.layout{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:calc(100vh - 72px)}
+.app{height:100vh;height:100dvh;display:flex;overflow:hidden}
 .sidebar{
-  padding:25px 14px;border-right:1px solid var(--line);
-  background:rgba(20,21,18,.7);display:flex;flex-direction:column;gap:8px
+ width:238px;flex-shrink:0;height:100%;position:relative;
+ background:#101210;border-right:1px solid var(--border);
+ display:flex;flex-direction:column;padding:27px 15px 0;
 }
-.side-label{font-size:9px;color:#74766d;letter-spacing:2px;padding:14px 12px 8px}
-.nav{
-  width:100%;text-align:left;border:1px solid transparent;border-radius:11px;
-  padding:12px 13px;background:transparent;color:#a4a69d;
-  display:flex;align-items:center;gap:12px;transition:all .25s;
-  position:relative;overflow:hidden
+.brand{display:flex;align-items:center;gap:12px;padding:0 9px 27px}
+.brand-mark{width:42px;height:42px;border-radius:12px;background:#25291f;
+display:grid;place-items:center;color:var(--yellow);font-weight:900;font-size:22px}
+.brand-name{font-size:13px;font-weight:750;letter-spacing:.4px}
+.brand-sub{color:var(--muted);font-size:11px;margin-top:4px}
+.section-label{font-size:10px;letter-spacing:2px;color:#7f8780;
+padding:10px 10px 15px}
+.nav{display:grid;gap:7px}
+.nav button{
+ position:relative;display:flex;align-items:center;gap:13px;
+ width:100%;padding:13px 12px;border:1px solid transparent;
+ background:transparent;color:#aab0aa;border-radius:11px;
+ text-align:left;transition:.22s ease
 }
-.nav .ico{font-size:17px;width:20px;text-align:center}
-.nav:hover{background:#252620;color:white;transform:translateX(2px)}
-.nav.active{background:rgba(255,230,0,.085);color:var(--yellow);border-color:rgba(255,230,0,.17)}
-.nav.active:before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;background:var(--yellow);border-radius:4px}
-.side-bottom{margin-top:auto;padding:15px 11px;border-top:1px solid var(--line)}
-.user-chip{display:flex;align-items:center;gap:10px}
-.avatar{width:34px;height:34px;display:grid;place-items:center;background:#34352d;color:var(--yellow);border-radius:11px;font-weight:bold}
-.small-muted{font-size:10px;color:var(--muted)}
-main{padding:30px 34px 45px;min-width:0;max-width:1800px;width:100%;margin:auto}
-.page{animation:appear .45s ease both}
-.hidden{display:none!important}
-.eyebrow{font-size:10px;letter-spacing:2.2px;color:var(--yellow);text-transform:uppercase;font-weight:700}
-.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:27px;flex-wrap:wrap}
-h1{font-size:clamp(27px,3vw,39px);line-height:1.15;letter-spacing:-1.6px;margin:9px 0 10px;font-weight:650}
-.subtitle{font-size:12px;color:var(--muted);line-height:1.8}
-.head-controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
-.control{
-  background:#1a1b18;border:1px solid var(--line);border-radius:10px;
-  padding:10px 12px;color:#e5e5dc;transition:border-color .2s
-}
-.control:hover,.control:focus{border-color:#77776a}
-select.control{min-width:125px}
-.primary-btn{
-  background:var(--yellow);border:1px solid var(--yellow);color:#151510;
-  border-radius:10px;padding:10px 15px;font-weight:750;transition:.25s;
-}
-.primary-btn:hover{background:#fff27a;box-shadow:0 0 25px #ffe60028;transform:translateY(-2px)}
-.ghost-btn{
-  background:#1b1c19;border:1px solid var(--line);color:#ddd;
-  border-radius:10px;padding:10px 13px;transition:.2s
-}
-.ghost-btn:hover{border-color:var(--yellow);color:var(--yellow)}
-.demo-banner{
-  display:flex;align-items:center;gap:10px;background:#292713;
-  border:1px solid #625b20;border-radius:10px;padding:10px 13px;
-  font-size:10px;color:#d9d18a;margin-bottom:23px
-}
-.demo-banner b{color:var(--yellow)}
-.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:28px 0 13px}
-.section-title{font-size:14px;font-weight:650;letter-spacing:-.2px}
-.section-note{font-size:10px;color:var(--muted)}
-.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
-.card{
-  background:linear-gradient(145deg,rgba(32,33,29,.96),rgba(23,24,21,.97));
-  border:1px solid var(--line);border-radius:var(--radius);
-  position:relative;overflow:hidden;transition:transform .28s,border-color .28s,box-shadow .28s;
-}
-.card:hover{border-color:rgba(255,230,0,.27);box-shadow:0 12px 35px #0003}
-.kpi{padding:19px 19px 17px;min-height:155px;animation:appear .55s both}
-.kpi:after{
-  content:"";position:absolute;inset:0 auto 0 0;width:2px;
-  background:var(--yellow);opacity:.5;transition:opacity .3s
-}
-.kpi:hover:after{opacity:1}
-.kpi-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.kpi-label{font-size:11px;color:#a8a99f}
-.kpi-icon{
-  width:31px;height:31px;border:1px solid var(--line);border-radius:10px;
-  display:grid;place-items:center;color:var(--yellow);font-size:15px;background:#ffffff04
-}
-.kpi-value{font-size:clamp(23px,2.3vw,32px);font-weight:650;letter-spacing:-1.4px;margin:15px 0 9px;line-height:1.15;overflow-wrap:anywhere}
-.kpi-bottom{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:10px;color:var(--muted)}
-.delta{padding:3px 6px;border-radius:5px;font-size:9px;font-weight:750}
-.delta.up{background:#15382b;color:var(--green)}
-.delta.down{background:#402323;color:var(--red)}
-.delta.neutral{background:#34332a;color:#d9d09a}
-.grid-main{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(270px,1fr);gap:14px}
-.panel{padding:20px}
-.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.panel-title{font-size:13px;font-weight:650}
-.panel-desc{font-size:10px;color:var(--muted);margin-top:5px}
-.chart-legend{display:flex;gap:13px;align-items:center;flex-wrap:wrap;font-size:10px;color:var(--muted);margin-top:15px}
-.legend-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}
-.chart-wrap{position:relative;width:100%;height:255px;margin-top:20px}
-canvas{display:block;width:100%;height:100%}
-.chart-tooltip{
-  position:absolute;z-index:5;pointer-events:none;background:#f6f5e9;color:#181914;
-  padding:10px 12px;border-radius:9px;box-shadow:0 8px 28px #0005;
-  font-size:10px;min-width:115px;opacity:0;transform:translateY(5px);
-  transition:opacity .12s,transform .12s
-}
-.chart-tooltip.show{opacity:1;transform:translateY(0)}
-.tooltip-title{font-weight:bold;margin-bottom:6px}
-.tooltip-row{display:flex;justify-content:space-between;gap:15px;margin-top:3px}
-.donut-area{display:flex;flex-direction:column;align-items:center;padding-top:19px}
-.donut{
-  width:172px;height:172px;border-radius:50%;position:relative;
-  display:grid;place-items:center;
-  background:conic-gradient(var(--yellow) 0 35%,#a5c5ff 35% 62%,#79e2ae 62% 81%,#55564e 81% 100%);
-  transition:transform .5s;animation:appear .7s both
-}
-.donut:hover{transform:rotate(8deg) scale(1.035)}
-.donut:before{content:"";position:absolute;inset:17px;background:#1a1b18;border-radius:50%;border:1px solid var(--line)}
-.donut-center{position:relative;text-align:center}
-.donut-value{font-size:25px;font-weight:700;letter-spacing:-1px}
-.donut-caption{font-size:10px;color:var(--muted)}
-.legend-list{width:100%;display:grid;gap:12px;margin-top:23px}
-.legend-item{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:11px}
-.legend-left{display:flex;align-items:center;gap:8px;color:#c5c6bd}
-.legend-item strong{font-size:11px}
-.bar-list{display:grid;gap:20px;margin-top:25px}
-.bar-meta{display:flex;justify-content:space-between;gap:10px;font-size:11px;margin-bottom:8px}
-.bar-meta span{color:#b8b9b0}
-.track{height:6px;border-radius:10px;background:#36372f;overflow:hidden}
-.fill{height:100%;width:0;border-radius:10px;background:var(--yellow);transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
-.fill.green{background:var(--green)}
-.fill.red{background:var(--red)}
-.insight{
-  margin-top:23px;padding:14px;background:#272619;border:1px solid #4b4620;
-  border-radius:12px;color:#c9c49b;font-size:11px;line-height:1.8
-}
-.insight strong{color:var(--yellow)}
-.table-panel{margin-top:14px}
-.table-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:17px;margin-bottom:13px}
-.search{width:min(280px,100%);background:#141512;border:1px solid var(--line);border-radius:9px;padding:10px 12px;color:white}
-.table-scroll{overflow:auto}
-table{border-collapse:collapse;width:100%;white-space:nowrap}
-th{text-align:left;padding:13px 14px;font-size:9px;letter-spacing:1px;color:#888a80;font-weight:600;border-bottom:1px solid var(--line)}
-td{padding:15px 14px;border-bottom:1px solid #ffffff08;font-size:11px}
+.nav button:hover{background:#1a1d18;color:white;transform:translateX(2px)}
+.nav button.active{color:var(--yellow);border-color:#5a5010;
+background:linear-gradient(110deg,#292815,#1c1e16)}
+.nav button.active:before{content:"";position:absolute;left:-1px;top:12px;
+bottom:12px;width:3px;border-radius:4px;background:var(--yellow)}
+.nav-icon{width:22px;font-size:18px;text-align:center}
+.sidebar-spacer{flex:1;min-height:15px}
+.profile{border-top:1px solid #2b302b;padding:22px 5px 25px;
+display:flex;align-items:center;gap:12px;flex-shrink:0;
+background:#101210}
+.profile-mark{width:44px;height:44px;border-radius:12px;background:#24271f;
+display:grid;place-items:center;color:var(--yellow);font-size:20px;font-weight:900}
+.profile-title{font-weight:700;font-size:12px}
+.profile-sub{font-size:11px;color:var(--muted);margin-top:5px}
+.main{flex:1;min-width:0;height:100%;overflow:auto;scrollbar-width:thin;
+scrollbar-color:#363b36 transparent}
+.content{max-width:1800px;margin:auto;padding:30px 30px 35px}
+.header{display:flex;align-items:center;justify-content:space-between;
+gap:20px;margin-bottom:24px}
+.heading-mark{height:4px;width:34px;background:var(--yellow);
+border-radius:4px;margin-bottom:10px}
+h1{font-size:clamp(23px,2.1vw,31px);letter-spacing:-1px;margin:0 0 7px}
+.subtitle{color:var(--muted);font-size:12px;line-height:1.6}
+.controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.control{background:#121512;border:1px solid #353b36;color:#dfe4dd;
+padding:11px 12px;border-radius:8px;outline:none;max-width:190px}
+.control:focus,input:focus{border-color:#b8ab00}
+.updated{font-size:10px;color:var(--muted);line-height:1.7;
+padding-left:12px;border-left:1px solid var(--border);white-space:nowrap}
+.btn{border:1px solid #353b36;background:#171a17;color:#e5e9e3;
+padding:10px 12px;border-radius:8px;transition:.2s}
+.btn:hover{border-color:var(--yellow);color:var(--yellow)}
+.mobile-menu{display:none}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+gap:14px;margin-bottom:16px}
+.card{background:linear-gradient(145deg,#111412,#0e100f);
+border:1px solid var(--border);border-radius:var(--radius);
+min-width:0;transition:border-color .25s,transform .25s}
+.card:hover{border-color:#494e37}
+.kpi{padding:17px 17px 15px;position:relative;overflow:hidden;
+animation:rise .55s both}
+.kpi:nth-child(2){animation-delay:.06s}.kpi:nth-child(3){animation-delay:.12s}
+.kpi:nth-child(4){animation-delay:.18s}
+.kpi-top{display:flex;align-items:center;gap:10px;color:#c4cbc4;font-size:12px}
+.kpi-icon{width:34px;height:34px;border-radius:10px;
+display:grid;place-items:center;background:#292917;color:var(--yellow);font-size:17px}
+.kpi-value{font-size:clamp(25px,2.3vw,34px);font-weight:760;
+letter-spacing:-1px;margin:10px 0 8px;font-variant-numeric:tabular-nums}
+.kpi-foot{display:flex;gap:8px;align-items:center;font-size:10px;color:var(--muted)}
+.positive{color:var(--green)}.negative{color:var(--red)}
+.spark{position:absolute;width:74px;height:34px;right:15px;bottom:30px;opacity:.9}
+.spark polyline{fill:none;stroke:var(--yellow);stroke-width:2}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(290px,.94fr);
+gap:16px;margin-bottom:16px}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;
+gap:12px;padding:16px 18px 0}
+.card-title{font-size:15px;font-weight:720;letter-spacing:-.2px}
+.card-sub{color:var(--muted);font-size:11px;margin-top:5px}
+.pill{font-size:10px;padding:6px 10px;border-radius:20px;
+border:1px solid #315b48;color:var(--green);white-space:nowrap}
+.chart-wrap{padding:10px 13px 8px;position:relative}
+canvas{display:block;width:100%;height:220px}
+.legend{display:flex;gap:18px;padding:0 9px 14px;font-size:10px;color:#b9c0b9}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.donut-layout{display:flex;align-items:center;gap:20px;padding:20px 18px;
+min-height:240px}
+.donut{width:150px;height:150px;flex-shrink:0;border-radius:50%;
+background:conic-gradient(var(--yellow) 0 32.4%,var(--blue) 32.4% 61.1%,
+var(--green) 61.1% 82.2%,#666c68 82.2% 100%);
+position:relative;animation:spinIn .9s both}
+.donut:after{content:"";position:absolute;inset:23px;background:#101311;
+border-radius:50%;border:1px solid #252a26}
+.donut-center{position:absolute;inset:0;z-index:1;display:grid;
+place-content:center;text-align:center;pointer-events:none}
+.donut-center strong{font-size:18px}.donut-center span{font-size:10px;
+color:var(--muted);margin-top:5px}
+.mix{flex:1;min-width:0}
+.mix-row{display:grid;grid-template-columns:1fr auto;gap:8px;
+align-items:center;padding:10px 0;border-bottom:1px solid #242925;font-size:11px}
+.mix-row:last-child{border:0}
+.mix-label{display:flex;align-items:center;gap:8px}
+.mix-amount{color:#cbd2cb;white-space:nowrap}
+.mix-pct{color:var(--muted);margin:4px 0 0 16px}
+.table-card{overflow:hidden}
+.table-toolbar{display:flex;justify-content:space-between;gap:12px;
+align-items:center;flex-wrap:wrap;padding:0 18px 12px}
+.search{background:#0c0f0d;border:1px solid #343a35;color:white;
+padding:9px 11px;border-radius:8px;width:190px;max-width:100%;outline:none}
+.table-scroll{overflow-x:auto;padding:0 12px}
+table{border-collapse:collapse;width:100%;min-width:700px;text-align:left}
+th{font-size:9px;color:#8f9990;text-transform:uppercase;letter-spacing:.35px;
+font-weight:550;padding:12px 9px;border-top:1px solid #242925;
+border-bottom:1px solid #242925}
+td{font-size:10px;color:#d4dad3;padding:10px 9px;
+border-bottom:1px solid #222723;white-space:nowrap}
 tbody tr{transition:background .2s;cursor:pointer}
-tbody tr:hover{background:#ffffff07}
-.manager-cell{display:flex;align-items:center;gap:10px}
-.mini-avatar{width:31px;height:31px;display:grid;place-items:center;border-radius:10px;background:#34352d;color:var(--yellow);font-size:10px;font-weight:700}
-.manager-name{font-weight:650}
-.manager-dept{font-size:9px;color:var(--muted);margin-top:3px}
-.pill{display:inline-flex;align-items:center;gap:5px;border-radius:5px;padding:5px 7px;font-size:9px;font-weight:650}
-.pill.good{background:#17372a;color:var(--green)}
-.pill.warn{background:#39321b;color:#edcf70}
-.pill.bad{background:#402323;color:var(--red)}
-.pill:before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
-.achievement{display:flex;align-items:center;gap:8px}
-.achievement .track{width:55px;height:4px}
-.table-foot{padding:13px 15px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:10px;color:var(--muted)}
-.subgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
-.small-card{padding:19px}
-.small-card .big{font-size:26px;font-weight:650;letter-spacing:-1px;margin:11px 0}
-.small-card .label{font-size:11px;color:var(--muted)}
-.monthly-list{display:grid;gap:12px;margin-top:20px}
-.month-row{display:grid;grid-template-columns:35px 1fr 75px;align-items:center;gap:10px;font-size:10px}
-.month-row .track{height:7px}
-.month-row strong{text-align:right}
-.risk-row{display:grid;grid-template-columns:80px 1fr;gap:13px;padding:16px 0;border-bottom:1px solid var(--line)}
-.risk-row:last-child{border-bottom:0}
-.risk-name{font-weight:650;font-size:12px}
-.risk-text{font-size:11px;color:#c2c3ba;margin-top:5px}
-.risk-action{font-size:10px;color:var(--muted);margin-top:6px}
-.modal-backdrop{
-  position:fixed;inset:0;z-index:50;background:#0009;backdrop-filter:blur(8px);
-  display:grid;place-items:center;padding:20px;animation:appear .2s both
+tbody tr:hover{background:#1a1e19}
+.manager{display:flex;align-items:center;gap:8px;font-weight:650}
+.avatar{width:27px;height:27px;border-radius:50%;display:grid;
+place-items:center;border:1px solid #676d61;color:var(--yellow);
+background:#292d25;font-size:9px}
+.progress{height:5px;background:#292e2a;border-radius:5px;overflow:hidden;
+margin-top:5px;min-width:55px}
+.progress span{display:block;height:100%;border-radius:5px;
+background:linear-gradient(90deg,#bcb000,var(--yellow));transition:width .6s}
+.progress.good span{background:var(--green)}
+.status{display:inline-block;padding:4px 8px;border-radius:12px;
+font-size:9px;background:#10271e;color:var(--green)}
+.status.watch{background:#292612;color:var(--yellow)}
+.status.risk{background:#30181b;color:var(--red)}
+.table-footer{display:flex;justify-content:space-between;align-items:center;
+gap:12px;padding:13px 18px;color:var(--muted);font-size:10px}
+.link-btn{background:none;border:0;color:#d9dfd8;padding:5px}
+.link-btn:hover{color:var(--yellow)}
+.risk-list{padding:7px 17px 12px}
+.risk-item{display:grid;grid-template-columns:64px minmax(0,1fr) 15px;
+gap:10px;align-items:start;padding:13px 0;border-bottom:1px solid #252a26;
+cursor:pointer;transition:.2s}
+.risk-item:last-child{border:0}
+.risk-item:hover .risk-title{color:var(--yellow)}
+.severity{font-size:9px;font-weight:650;padding:4px 7px;border-radius:20px;
+width:max-content;margin-top:1px}
+.severity.high{color:var(--red);background:#30171c;border:1px solid #632b34}
+.severity.medium{color:var(--yellow);background:#282512;border:1px solid #554a10}
+.severity.low{color:var(--green);background:#10271d;border:1px solid #22573f}
+.risk-title{font-size:11px;font-weight:700;margin-bottom:5px;transition:.2s}
+.risk-desc{font-size:10px;color:#b4bcb5;line-height:1.6}
+.risk-meta{font-size:10px;color:var(--muted);line-height:1.5;margin-top:3px}
+.arrow{font-size:16px;color:#aeb5ad}
+.bottom-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(290px,.94fr);
+gap:16px}
+.insight{padding:17px 18px}
+.insight-row{display:flex;justify-content:space-between;align-items:center;
+gap:12px;padding:11px 0;border-bottom:1px solid #252a26;font-size:11px}
+.insight-row:last-child{border:0}
+.insight-label{color:#aab2aa}
+.insight-value{font-weight:700;font-variant-numeric:tabular-nums}
+.toast{position:fixed;bottom:20px;right:20px;background:#20251f;
+border:1px solid #535d3c;padding:13px 17px;border-radius:10px;
+z-index:20;box-shadow:0 8px 30px #0008;animation:rise .2s}
+.footer-note{color:#737d74;font-size:10px;margin-top:18px}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}
+to{opacity:1;transform:translateY(0)}}
+@keyframes spinIn{from{opacity:.3;transform:scale(.8) rotate(-25deg)}
+to{opacity:1;transform:scale(1) rotate(0)}}
+@media(min-width:1500px){.content{padding:36px 40px}}
+@media(max-width:1150px){
+ .sidebar{width:205px}.content{padding:24px 20px}
+ .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .grid,.bottom-grid{grid-template-columns:minmax(0,1fr)}
+ .donut-layout{justify-content:center}
 }
-.modal{width:min(680px,100%);max-height:85vh;overflow:auto;background:#1b1c18;border:1px solid #ffffff18;border-radius:22px;padding:24px;box-shadow:0 30px 100px #0009}
-.modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.modal h2{font-size:24px;letter-spacing:-.8px;margin:7px 0}
-.modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:22px}
-.modal-stat{padding:15px;border:1px solid var(--line);background:#22231e;border-radius:13px}
-.modal-stat .label{font-size:10px;color:var(--muted)}
-.modal-stat .value{font-size:23px;font-weight:650;margin-top:8px}
-.toast{
-  position:fixed;bottom:25px;left:50%;transform:translate(-50%,20px);
-  opacity:0;pointer-events:none;z-index:100;background:#f2f1e5;color:#171812;
-  padding:12px 17px;border-radius:10px;box-shadow:0 10px 40px #0007;
-  transition:.25s;font-size:11px;font-weight:650
+@media(max-width:700px){
+ body{overflow:hidden}.sidebar{width:64px;padding:18px 8px 0}
+ .brand{padding:0 3px 24px}.brand-mark{width:42px}
+ .brand-copy,.section-label,.nav-label,.profile-copy{display:none}
+ .nav button{justify-content:center;padding:13px 0}
+ .nav-icon{width:auto}.profile{justify-content:center;padding:15px 0 20px}
+ .profile-mark{width:40px;height:40px}
+ .content{padding:20px 13px 28px}
+ .header{align-items:flex-start;flex-direction:column}
+ .controls{width:100%}.control{max-width:none;flex:1;min-width:0}
+ .updated{border-left:0;padding-left:0;width:100%}
+ .kpis{gap:9px}.kpi{padding:13px 11px}
+ .kpi-icon{width:29px;height:29px}.kpi-foot{flex-wrap:wrap}
+ .spark{width:45px;right:8px;opacity:.5}
+ .kpi-value{font-size:25px}
+ .donut-layout{gap:15px;padding:18px 12px}
+ .donut{width:118px;height:118px}
+ .donut:after{inset:19px}
+ .donut-center strong{font-size:15px}
+ .card-head{padding-left:13px;padding-right:13px}
+ .table-toolbar{padding:0 13px 12px}
+ .search{width:100%}
+ .risk-list{padding-left:12px;padding-right:12px}
 }
-.toast.show{opacity:1;transform:translate(-50%,0)}
-.footer{text-align:center;color:#66685f;font-size:10px;padding:32px 0 0}
 @media(prefers-reduced-motion:reduce){
-  *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
-}
-@media(min-width:1450px){main{padding-left:45px;padding-right:45px}.kpi{padding:23px;min-height:165px}}
-@media(max-width:1100px){
-  .layout{grid-template-columns:75px minmax(0,1fr)}
-  .sidebar{padding:23px 10px}
-  .side-label,.nav-label,.side-bottom .user-info{display:none}
-  .nav{justify-content:center;padding:13px 8px}
-  .nav .ico{font-size:19px}
-  .side-bottom{padding:14px 6px}
-  .grid-main{grid-template-columns:minmax(0,1fr)}
-  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:650px){
-  .topbar{height:62px;padding:0 15px}
-  .brand{gap:9px}.logo{font-size:27px}.brand-divider{height:25px}
-  .brand-title{font-size:10px}.brand-sub{font-size:7px;letter-spacing:1px}
-  .live{display:none}
-  .layout{grid-template-columns:1fr}
-  .sidebar{
-    position:sticky;top:62px;z-index:15;display:flex;flex-direction:row;
-    border-right:0;border-bottom:1px solid var(--line);padding:7px;gap:4px;
-    overflow-x:auto;background:rgba(19,20,17,.96)
-  }
-  .nav{min-width:49px;width:auto;flex:1;padding:10px 8px}
-  .nav.active:before{top:auto;bottom:0;left:12px;right:12px;width:auto;height:2px}
-  .nav .ico{font-size:17px}
-  .side-bottom{display:none}
-  main{padding:23px 13px 35px}
-  h1{font-size:29px}
-  .page-head{margin-bottom:20px}
-  .head-controls{width:100%}
-  .head-controls select{flex:1;min-width:0}
-  .kpis{gap:9px}
-  .kpi{padding:13px;min-height:140px;border-radius:14px}
-  .kpi-value{font-size:23px;margin:12px 0 8px}
-  .kpi-label{font-size:10px}
-  .kpi-icon{width:27px;height:27px}
-  .grid-main{gap:10px}
-  .panel{padding:15px}
-  .chart-wrap{height:220px}
-  .subgrid{grid-template-columns:1fr}
-  .table-tools .search{width:100%}
-  .modal-grid{grid-template-columns:1fr 1fr}
-  .modal{padding:18px}
-}
-@media(max-width:370px){.kpis{grid-template-columns:1fr}.kpi{min-height:125px}.modal-grid{grid-template-columns:1fr}}
-@media print{
-  .topbar,.sidebar,.head-controls,.table-tools,.icon-btn,.ghost-btn,.primary-btn{display:none!important}
-  .layout{display:block}main{padding:0;max-width:none}.page{display:block!important}
-  body{background:#fff;color:#171717}.card{break-inside:avoid;background:#fff;color:#171717;border:1px solid #ddd}
-  .kpi-label,.subtitle,.panel-desc,.small-muted{color:#555}
-  .footer{color:#777}
+ *,*:before,*:after{animation:none!important;transition:none!important;
+ scroll-behavior:auto!important}
 }
 </style>
 </head>
-
 <body>
-<div class="ambient"></div>
-
-<header class="topbar">
+<div class="app">
+<aside class="sidebar">
   <div class="brand">
-    <div class="logo">EY</div>
-    <div class="brand-divider"></div>
-    <div>
-      <div class="brand-title">EXECUTIVE INTELLIGENCE</div>
-      <div class="brand-sub">FINANCIAL PERFORMANCE PLATFORM</div>
-    </div>
+    <div class="brand-mark">EY</div>
+    <div class="brand-copy"><div class="brand-name">EXECUTIVE INSIGHTS</div>
+      <div class="brand-sub">Financial intelligence</div></div>
   </div>
-  <div class="top-actions">
-    <div class="live"><span class="live-dot"></span> DEMO ENVIRONMENT</div>
-    <button class="icon-btn" id="refreshBtn" title="Refresh dashboard" aria-label="Refresh">↻</button>
-    <button class="icon-btn" id="exportBtn" title="Export manager data" aria-label="Export CSV">↓</button>
+  <div class="section-label">WORKSPACE</div>
+  <nav class="nav">
+    <button class="active" data-page="overview"><span class="nav-icon">◫</span><span class="nav-label">Overview</span></button>
+    <button data-page="managers"><span class="nav-icon">♙</span><span class="nav-label">Managers</span></button>
+    <button data-page="trends"><span class="nav-icon">⌁</span><span class="nav-label">Financial trends</span></button>
+    <button data-page="risks"><span class="nav-icon">◇</span><span class="nav-label">Risk &amp; actions</span></button>
+  </nav>
+  <div class="sidebar-spacer"></div>
+  <div class="profile">
+    <div class="profile-mark">EI</div>
+    <div class="profile-copy"><div class="profile-title">Executive view</div>
+      <div class="profile-sub">Demo workspace</div></div>
+  </div>
+</aside>
+
+<main class="main" id="main">
+<div class="content">
+<header class="header">
+  <div>
+    <div class="heading-mark"></div>
+    <h1 id="pageTitle">Executive performance</h1>
+    <div class="subtitle" id="pageSubtitle">Financial health, manager delivery and key business metrics.</div>
+  </div>
+  <div class="controls">
+    <select class="control" id="period" aria-label="Reporting period">
+      <option value="ytd">Year to date (YTD)</option>
+      <option value="q">Current quarter</option>
+      <option value="month">Current month</option>
+    </select>
+    <select class="control" id="department" aria-label="Department">
+      <option value="All">All departments</option>
+      <option>Advisory</option><option>Consulting</option>
+      <option>Tax</option><option>Assurance</option>
+    </select>
+    <button class="btn" id="refresh" title="Refresh dashboard">↻</button>
+    <div class="updated">Last updated<br><span id="updated">Demo data</span></div>
   </div>
 </header>
 
-<div class="layout">
-  <aside class="sidebar">
-    <div class="side-label">WORKSPACE</div>
-    <button class="nav active" data-page="overview"><span class="ico">◫</span><span class="nav-label">Overview</span></button>
-    <button class="nav" data-page="managers"><span class="ico">♙</span><span class="nav-label">Managers</span></button>
-    <button class="nav" data-page="trends"><span class="ico">⌁</span><span class="nav-label">Financial trends</span></button>
-    <button class="nav" data-page="risks"><span class="ico">◇</span><span class="nav-label">Risk & actions</span></button>
-    <div class="side-bottom">
-      <div class="user-chip">
-        <div class="avatar">EI</div>
-        <div class="user-info"><strong style="font-size:11px">Executive view</strong><div class="small-muted">Demo workspace</div></div>
-      </div>
+<section class="kpis" id="kpis">
+  <article class="card kpi"><div class="kpi-top"><span class="kpi-icon">▤</span>Revenue</div>
+    <div class="kpi-value" id="revenue">$12.4M</div>
+    <div class="kpi-foot"><b class="positive">▲ 12.5%</b> vs. last year</div>
+    <svg class="spark" viewBox="0 0 80 35"><polyline points="2,28 17,25 27,27 42,16 54,18 67,7 78,5"/></svg>
+  </article>
+  <article class="card kpi"><div class="kpi-top"><span class="kpi-icon">▥</span>Net margin</div>
+    <div class="kpi-value" id="margin">18.7%</div>
+    <div class="kpi-foot"><b class="positive">▲ 2.3 pp</b> vs. last year</div>
+    <svg class="spark" viewBox="0 0 80 35"><polyline points="2,29 13,30 25,20 36,23 50,18 64,12 78,3"/></svg>
+  </article>
+  <article class="card kpi"><div class="kpi-top"><span class="kpi-icon">♙</span>Utilization</div>
+    <div class="kpi-value" id="util">81.2%</div>
+    <div class="kpi-foot"><b class="positive">▲ 4.6 pp</b> vs. last year</div>
+    <svg class="spark" viewBox="0 0 80 35"><polyline points="2,27 15,29 26,20 38,21 52,10 64,10 78,4"/></svg>
+  </article>
+  <article class="card kpi"><div class="kpi-top"><span class="kpi-icon">◎</span>Revenue forecast</div>
+    <div class="kpi-value" id="forecast">$14.2M</div>
+    <div class="kpi-foot"><b class="positive">▲ 8.7%</b> vs. budget</div>
+    <svg class="spark" viewBox="0 0 80 35"><polyline points="2,28 15,20 25,24 39,17 51,14 65,5 78,4"/></svg>
+  </article>
+</section>
+
+<section class="grid" id="trends">
+  <article class="card">
+    <div class="card-head"><div><div class="card-title">Revenue trend</div>
+      <div class="card-sub">Actual vs. budget · $ millions</div></div>
+      <span class="pill">● On track</span></div>
+    <div class="chart-wrap"><canvas id="revenueChart" aria-label="Interactive revenue trend chart"></canvas></div>
+    <div class="legend"><span><i class="dot" style="background:var(--yellow)"></i>Actual revenue</span>
+      <span><i class="dot" style="background:#777e78"></i>Budget</span></div>
+  </article>
+  <article class="card">
+    <div class="card-head"><div><div class="card-title">Revenue mix</div>
+      <div class="card-sub">By department</div></div></div>
+    <div class="donut-layout">
+      <div class="donut"><div class="donut-center"><strong id="donutTotal">$12.4M</strong><span>Total revenue</span></div></div>
+      <div class="mix" id="mix"></div>
     </div>
-  </aside>
+  </article>
+</section>
 
-  <main>
-    <div class="page-head">
-      <div>
-        <div class="eyebrow">◈ &nbsp; Executive reporting</div>
-        <h1 id="pageTitle">The bigger picture.</h1>
-        <div class="subtitle" id="pageSubtitle">A live-style view of financial health, manager delivery and business performance.</div>
-      </div>
-      <div class="head-controls">
-        <select id="period" class="control" aria-label="Reporting period">
-          <option value="YTD">Year to date</option>
-          <option value="Q1">Quarter 1</option>
-          <option value="Q2">Quarter 2</option>
-          <option value="Q3">Quarter 3</option>
-          <option value="Q4">Quarter 4</option>
-          <option value="FY">Full year</option>
-        </select>
-        <select id="department" class="control" aria-label="Department">
-          <option value="All">All departments</option>
-          <option value="Advisory">Advisory</option>
-          <option value="Consulting">Consulting</option>
-          <option value="Tax">Tax</option>
-          <option value="Assurance">Assurance</option>
-        </select>
-        <button class="primary-btn" id="printBtn">↗ &nbsp; Report</button>
-      </div>
+<section class="grid" id="managers">
+  <article class="card table-card">
+    <div class="card-head"><div><div class="card-title">Manager performance</div>
+      <div class="card-sub">Revenue, margin and target achievement</div></div></div>
+    <div class="table-toolbar">
+      <span class="card-sub" id="managerCount">Manager portfolio</span>
+      <input class="search" id="search" placeholder="⌕  Search managers..." aria-label="Search managers">
     </div>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Manager</th><th>Department</th><th>Revenue</th>
+      <th>Budget</th><th>Achievement</th><th>Margin</th><th>Utilization</th><th>Status</th></tr></thead>
+      <tbody id="managerRows"></tbody>
+    </table></div>
+    <div class="table-footer"><span id="tableInfo">Demo data · Sample managers</span>
+      <button class="link-btn" id="viewAll">View all managers →</button></div>
+  </article>
 
-    <div class="demo-banner"><span>✳</span><span><b>DEMO DATA</b> &nbsp; Fictional figures for design purposes. No live financial systems are connected.</span></div>
+  <article class="card" id="risks">
+    <div class="card-head"><div><div class="card-title">⚠ Key risks &amp; actions</div>
+      <div class="card-sub">Prioritized items requiring attention</div></div></div>
+    <div class="risk-list" id="riskList"></div>
+  </article>
+</section>
 
-    <section class="page" id="overviewPage">
-      <div class="section-head"><div class="section-title">Performance at a glance</div><div class="section-note">01 / FINANCIAL OVERVIEW</div></div>
-      <div class="kpis" id="kpiGrid"></div>
-
-      <div class="section-head"><div class="section-title">Business performance</div><div class="section-note">REVENUE · TARGETS · CONTRIBUTION</div></div>
-      <div class="grid-main">
-        <div class="card panel">
-          <div class="panel-head"><div><div class="panel-title">Revenue trajectory</div><div class="panel-desc">Actual against budget · monthly · $ thousands</div></div><span class="pill good">● Trend view</span></div>
-          <div class="chart-wrap" id="revenueWrap"><canvas id="revenueChart"></canvas><div class="chart-tooltip" id="chartTooltip"></div></div>
-          <div class="chart-legend"><span><i class="legend-dot" style="background:var(--yellow)"></i>Actual revenue</span><span><i class="legend-dot" style="background:#686b62"></i>Budget</span></div>
-        </div>
-        <div class="card panel">
-          <div class="panel-head"><div><div class="panel-title">Revenue mix</div><div class="panel-desc">Contribution by department</div></div><span style="color:var(--yellow)">◉</span></div>
-          <div class="donut-area"><div class="donut" id="donut"><div class="donut-center"><div class="donut-value" id="donutValue">100%</div><div class="donut-caption">Total revenue</div></div></div></div>
-          <div class="legend-list" id="donutLegend"></div>
-        </div>
-      </div>
-
-      <div class="section-head"><div class="section-title">Target attainment</div><div class="section-note">02 / MANAGER DELIVERY</div></div>
-      <div class="grid-main">
-        <div class="card panel">
-          <div class="panel-head"><div><div class="panel-title">Department scorecard</div><div class="panel-desc">Revenue achievement against budget</div></div></div>
-          <div class="bar-list" id="departmentBars"></div>
-          <div class="insight" id="performanceInsight"></div>
-        </div>
-        <div class="card panel">
-          <div class="panel-head"><div><div class="panel-title">Operational pulse</div><div class="panel-desc">Selected population indicators</div></div></div>
-          <div id="operationalBars" class="bar-list"></div>
-        </div>
-      </div>
-
-      <div class="section-head"><div class="section-title">Manager leaderboard</div><div class="section-note">03 / ACCOUNTABILITY</div></div>
-      <div class="card table-panel">
-        <div class="panel" style="padding-bottom:0">
-          <div class="panel-head"><div><div class="panel-title">Performance by manager</div><div class="panel-desc">Select any manager to explore their results.</div></div><span class="pill warn">Illustrative</span></div>
-          <div class="table-tools"><input class="search" id="search" type="search" placeholder="⌕  Search managers or departments..." aria-label="Search managers"><span class="small-muted" id="rowCount"></span></div>
-        </div>
-        <div class="table-scroll"><table>
-          <thead><tr><th>MANAGER</th><th>REVENUE</th><th>BUDGET</th><th>ACHIEVEMENT</th><th>MARGIN</th><th>UTILIZATION</th><th>STATUS</th></tr></thead>
-          <tbody id="managerTable"></tbody>
-        </table></div>
-        <div class="table-foot"><span>Amounts displayed in $ thousands</span><span>↗ Select a row for details</span></div>
-      </div>
-    </section>
-
-    <section class="page hidden" id="managersPage">
-      <div class="section-head"><div class="section-title">Manager intelligence</div><div class="section-note">04 / INDIVIDUAL PERFORMANCE</div></div>
-      <div class="kpis" id="managerKpis"></div>
-      <div class="card panel" style="margin-top:14px">
-        <div class="panel-title">Ranked target achievement</div><div class="panel-desc">Manager comparison against assigned revenue targets</div>
-        <div class="chart-wrap"><canvas id="managerChart"></canvas></div>
-      </div>
-      <div class="section-head"><div class="section-title">Detailed performance register</div></div>
-      <div class="card table-panel"><div class="table-scroll"><table>
-        <thead><tr><th>MANAGER</th><th>REVENUE</th><th>PROFIT</th><th>MARGIN</th><th>GROWTH</th><th>UTILIZATION</th><th>CLIENTS</th><th>DSO</th><th>STATUS</th></tr></thead>
-        <tbody id="detailTable"></tbody>
-      </table></div></div>
-    </section>
-
-    <section class="page hidden" id="trendsPage">
-      <div class="section-head"><div class="section-title">Financial trends</div><div class="section-note">05 / PERFORMANCE OVER TIME</div></div>
-      <div class="subgrid" id="trendKpis"></div>
-      <div class="card panel" style="margin-top:14px">
-        <div class="panel-title">Monthly revenue vs budget</div><div class="panel-desc">Values in $ thousands · illustrative reporting profile</div>
-        <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
-        <div class="chart-legend"><span><i class="legend-dot" style="background:var(--yellow)"></i>Actual</span><span><i class="legend-dot" style="background:#686b62"></i>Budget</span></div>
-      </div>
-      <div class="section-head"><div class="section-title">Monthly variance register</div></div>
-      <div class="card table-panel"><div class="table-scroll"><table>
-        <thead><tr><th>MONTH</th><th>ACTUAL</th><th>BUDGET</th><th>VARIANCE</th><th>VARIANCE %</th></tr></thead>
-        <tbody id="monthlyTable"></tbody>
-      </table></div></div>
-    </section>
-
-    <section class="page hidden" id="risksPage">
-      <div class="section-head"><div class="section-title">Exceptions & opportunities</div><div class="section-note">06 / ACTION CENTER</div></div>
-      <div class="kpis" id="riskKpis"></div>
-      <div class="section-head"><div class="section-title">Items for management review</div></div>
-      <div class="card panel"><div id="riskList"></div></div>
-      <div class="insight"><strong>Governance note:</strong> These flags use illustrative rules. Validate financial definitions, thresholds, source data and context before using them for decisions or performance reviews.</div>
-    </section>
-
-    <div class="footer">EXECUTIVE INTELLIGENCE &nbsp;·&nbsp; DESIGN PROTOTYPE &nbsp;·&nbsp; FICTIONAL DATA &nbsp;·&nbsp; NOT AN OFFICIAL EY PRODUCT</div>
-  </main>
+<section class="bottom-grid">
+  <article class="card">
+    <div class="card-head"><div><div class="card-title">Financial health indicators</div>
+      <div class="card-sub">Additional KPIs for stakeholder review</div></div></div>
+    <div class="insight" id="health"></div>
+  </article>
+  <article class="card">
+    <div class="card-head"><div><div class="card-title">Performance notes</div>
+      <div class="card-sub">Suggested stakeholder review priorities</div></div></div>
+    <div class="insight">
+      <div class="insight-row"><span class="insight-label">Revenue vs. budget</span><b class="insight-value positive">+8.7%</b></div>
+      <div class="insight-row"><span class="insight-label">Margin discipline</span><b class="insight-value">Review outliers</b></div>
+      <div class="insight-row"><span class="insight-label">Cash collection</span><b class="insight-value">Monitor DSO</b></div>
+      <div class="insight-row"><span class="insight-label">Capacity planning</span><b class="insight-value">Review utilization</b></div>
+      <div class="insight-row"><span class="insight-label">Data status</span><b class="insight-value" style="color:var(--yellow)">Illustrative demo</b></div>
+    </div>
+  </article>
+</section>
+<div class="footer-note">Executive Insights · Illustrative sample data only · Not for financial reporting or decision-making.</div>
 </div>
-
-<div id="modalRoot"></div>
-<div class="toast" id="toast" role="status"></div>
-
+</main>
+</div>
 <script>
-"use strict";
-
-/* =====================================================
-   SAMPLE DATA
-   Replace these fictional records with approved data later.
-   All financial amounts are in USD thousands.
-===================================================== */
-const managers=[
- {name:"Aarav Mehta",dept:"Advisory",revenue:1850,budget:1700,profit:425,growth:14,utilization:82,clients:12,dso:42,team:18},
- {name:"Priya Sharma",dept:"Consulting",revenue:2100,budget:2200,profit:525,growth:9,utilization:78,clients:15,dso:48,team:24},
- {name:"Rohan Iyer",dept:"Tax",revenue:1250,budget:1150,profit:375,growth:11,utilization:86,clients:21,dso:35,team:14},
- {name:"Ananya Rao",dept:"Assurance",revenue:1650,budget:1800,profit:330,growth:-3,utilization:72,clients:18,dso:61,team:20},
- {name:"Vikram Nair",dept:"Advisory",revenue:1950,budget:1850,profit:585,growth:18,utilization:88,clients:10,dso:39,team:16},
- {name:"Ishita Kapoor",dept:"Consulting",revenue:1750,budget:1600,profit:350,growth:12,utilization:81,clients:13,dso:44,team:19},
- {name:"Kabir Singh",dept:"Tax",revenue:980,budget:1100,profit:245,growth:2,utilization:69,clients:17,dso:66,team:12},
- {name:"Meera Desai",dept:"Assurance",revenue:1450,budget:1400,profit:290,growth:7,utilization:80,clients:16,dso:46,team:17}
-];
-const months=[
- {name:"Jan",actual:900,budget:920},{name:"Feb",actual:950,budget:940},
- {name:"Mar",actual:1050,budget:1000},{name:"Apr",actual:1100,budget:1080},
- {name:"May",actual:1150,budget:1120},{name:"Jun",actual:1200,budget:1180},
- {name:"Jul",actual:1250,budget:1230},{name:"Aug",actual:1180,budget:1250},
- {name:"Sep",actual:1300,budget:1280},{name:"Oct",actual:0,budget:1320},
- {name:"Nov",actual:0,budget:1350},{name:"Dec",actual:0,budget:1400}
-];
-const periods={YTD:1,Q1:.31,Q2:.34,Q3:.35,Q4:.30,FY:1.38};
 const $=id=>document.getElementById(id);
-const sum=(a,k)=>a.reduce((s,x)=>s+x[k],0);
-const avg=(a,k)=>a.length?sum(a,k)/a.length:0;
-const pct=(n,d)=>d?n/d*100:0;
-const fmt=n=>"$"+Math.abs(n).toLocaleString("en-US",{maximumFractionDigits:0});
-const fmtM=n=>"$"+(n/1000).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})+"M";
-const percent=n=>(n>0?"+":"")+n.toFixed(1)+"%";
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const colors=["#ffe600","#a5c5ff","#79e2ae","#77796f"];
-let currentPage="overview", chartPoints=[], resizeTimer, toastTimer;
-let selectedManager=null;
-
-function getData(){
- const factor=periods[$("period").value]||1;
- const dept=$("department").value;
- return managers.filter(m=>dept==="All"||m.dept===dept).map(m=>({...m,
-  revenue:Math.round(m.revenue*factor),budget:Math.round(m.budget*factor),
-  profit:Math.round(m.profit*factor)}));
+const departments=["Advisory","Consulting","Tax","Assurance"];
+const colors=["#ffe600","#83aaff","#42e5a2","#747a76"];
+const managers=[
+{name:"Aarav Mehta",dept:"Advisory",rev:1850,budget:1700,margin:22,util:82,dso:43},
+{name:"Priya Sharma",dept:"Consulting",rev:2100,budget:2200,margin:14.5,util:78,dso:52},
+{name:"Rohan Iyer",dept:"Tax",rev:1250,budget:1150,margin:30,util:86,dso:39},
+{name:"Ananya Rao",dept:"Assurance",rev:1650,budget:1800,margin:20,util:72,dso:66},
+{name:"Vikram Nair",dept:"Advisory",rev:1950,budget:1850,margin:30,util:88,dso:41},
+{name:"Neha Kapoor",dept:"Consulting",rev:1550,budget:1600,margin:19,util:81,dso:48},
+{name:"Arjun Desai",dept:"Tax",rev:1050,budget:1000,margin:17,util:68,dso:72},
+{name:"Ishita Sen",dept:"Assurance",rev:1000,budget:950,margin:24,util:84,dso:46}
+];
+let showAll=false, chartPoint=null, toastTimer;
+const money=n=>"$"+(n/1000).toFixed(2)+"M";
+const initials=n=>n.split(" ").map(x=>x[0]).join("");
+const achievement=m=>m.rev/m.budget*100;
+const selectedDept=()=>$("department").value;
+function filtered(){
+ const q=$("search").value.toLowerCase().trim();
+ return managers.filter(m=>(selectedDept()==="All"||m.dept===selectedDept())
+ &&m.name.toLowerCase().includes(q));
 }
-function getMonths(){
- const p=$("period").value;
- if(p==="FY")return months;
- if(p==="Q1")return months.slice(0,3);
- if(p==="Q2")return months.slice(3,6);
- if(p==="Q3")return months.slice(6,9);
- if(p==="Q4")return months.slice(9,12);
- return months.slice(0,9);
+function toast(msg){
+ document.querySelector(".toast")?.remove();
+ const el=document.createElement("div");el.className="toast";el.textContent=msg;
+ document.body.appendChild(el);clearTimeout(toastTimer);
+ toastTimer=setTimeout(()=>el.remove(),2800);
 }
-function achievement(m){return pct(m.revenue,m.budget)}
-function margin(m){return pct(m.profit,m.revenue)}
-function status(m){
- if(achievement(m)>=100&&m.utilization>=75)return["On target","good"];
- if(achievement(m)>=90)return["Watch","warn"];
- return["Below target","bad"];
+function renderManagers(){
+ const list=filtered(), visible=showAll?list:list.slice(0,5);
+ $("managerRows").innerHTML=visible.map(m=>{
+ const a=achievement(m), status=a<90||m.margin<15?"At risk":a<100||m.util<75?"Watch":"On target";
+ const cls=status==="At risk"?"risk":status==="Watch"?"watch":"";
+ return `<tr tabindex="0" data-name="${m.name}">
+ <td><div class="manager"><span class="avatar">${initials(m.name)}</span>${m.name}</div></td>
+ <td>${m.dept}</td><td>${money(m.rev)}</td><td>${money(m.budget)}</td>
+ <td>${a.toFixed(1)}%<div class="progress ${a>=100?"good":""}"><span style="width:${Math.min(a,100)}%"></span></div></td>
+ <td>${m.margin.toFixed(1)}%</td><td>${m.util}%</td>
+ <td><span class="status ${cls}">${status}</span></td></tr>`;
+ }).join("");
+ $("managerCount").textContent=`${list.length} manager${list.length!==1?"s":""} · ${selectedDept()==="All"?"All departments":selectedDept()}`;
+ $("tableInfo").textContent=`Showing ${visible.length} of ${list.length} managers · Sample data`;
+ $("viewAll").textContent=showAll?"Show fewer ↑":"View all managers →";
 }
-function animateNumber(el,target,formatter){
- const reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
- if(reduce){el.textContent=formatter(target);return}
- const start=performance.now(),duration=850;
- function tick(now){
-  const t=Math.min(1,(now-start)/duration);
-  const eased=1-Math.pow(1-t,4);
-  el.textContent=formatter(target*eased);
-  if(t<1)requestAnimationFrame(tick);
- }
- requestAnimationFrame(tick);
-}
-function kpi(label,value,foot,icon,delta="neutral",raw=null,formatter=null){
- return `<div class="card kpi"><div class="kpi-top"><div class="kpi-label">${label}</div><div class="kpi-icon">${icon}</div></div>
- <div class="kpi-value" ${raw!==null?'data-count="'+raw+'"':''}>${value}</div>
- <div class="kpi-bottom"><span class="delta ${delta}">${foot.split("|")[0]}</span><span>${foot.split("|").slice(1).join("|")}</span></div></div>`;
-}
-function animateCards(){
- document.querySelectorAll("[data-count]").forEach(el=>{
-  const raw=Number(el.dataset.count);
-  const original=el.textContent;
-  let f=n=>Math.round(n).toLocaleString("en-US");
-  if(original.includes("$"))f=n=>fmtM(n);
-  else if(original.includes("%"))f=n=>n.toFixed(1)+"%";
-  animateNumber(el,raw,f);
- });
-}
-function renderKpis(data){
- const revenue=sum(data,"revenue"),budget=sum(data,"budget"),profit=sum(data,"profit");
- const attain=pct(revenue,budget),m=pct(profit,revenue),growth=avg(data,"growth");
- const utilization=avg(data,"utilization");
- const clients=sum(data,"clients");
- const costs=revenue-profit;
- $("kpiGrid").innerHTML=[
-  kpi("Total revenue",fmtM(revenue),percent(attain-100)+"|vs budget","↗",attain>=100?"up":"down",revenue),
-  kpi("Operating contribution",fmtM(profit),m.toFixed(1)+"%|contribution margin","◈","up",profit),
-  kpi("Budget attainment",attain.toFixed(1)+"%",(attain>=100?"Target achieved":"Target gap")+"|vs revenue plan","◎",attain>=100?"up":"down",attain),
-  kpi("Average growth",percent(growth),"Manager average|illustrative YoY","⌁",growth>=0?"up":"down",growth),
-  kpi("Estimated delivery costs",fmtM(costs),"Revenue less contribution|proxy only","◇","neutral",costs),
-  kpi("Average utilization",utilization.toFixed(1)+"%","Delivery capacity|illustrative","◷","neutral",utilization),
-  kpi("Client engagements",clients.toLocaleString("en-US"),data.length+" managers|in current scope","♙","neutral",clients),
-  kpi("Average profit margin",m.toFixed(1)+"%","Aggregate contribution|divided by revenue","◉","neutral",m)
- ].join("");
- animateCards();
-}
-function drawLineChart(canvasId,data){
- const canvas=$(canvasId);if(!canvas)return;
- const wrap=canvas.parentElement,tip=$("chartTooltip");
- const w=wrap.clientWidth,h=wrap.clientHeight;if(w<20||h<20)return;
- const dpr=window.devicePixelRatio||1;
- canvas.width=w*dpr;canvas.height=h*dpr;
- const ctx=canvas.getContext("2d");ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
- const left=38,right=12,top=12,bottom=28,pw=w-left-right,ph=h-top-bottom;
- const max=Math.max(100,...data.map(m=>Math.max(m.actual,m.budget)))*1.13;
- const x=i=>left+(data.length<=1?pw/2:i*pw/(data.length-1));
- const y=v=>top+ph-(v/max)*ph;
- ctx.font="10px Arial";ctx.textBaseline="middle";
- for(let i=0;i<=4;i++){
-  const yy=top+ph*i/4;
-  ctx.beginPath();ctx.strokeStyle="#ffffff0d";ctx.moveTo(left,yy);ctx.lineTo(w-right,yy);ctx.stroke();
-  ctx.fillStyle="#797b72";ctx.textAlign="right";
-  ctx.fillText(Math.round(max*(1-i/4)),left-7,yy);
- }
- data.forEach((m,i)=>{
-  ctx.fillStyle="#77796f";ctx.textAlign="center";ctx.textBaseline="top";
-  ctx.fillText(m.name,x(i),h-bottom+10);
- });
- function path(key,color,width,dashed=false){
-  ctx.beginPath();ctx.lineWidth=width;ctx.strokeStyle=color;ctx.lineJoin="round";ctx.lineCap="round";
-  ctx.setLineDash(dashed?[4,5]:[]);
-  data.forEach((m,i)=>i?ctx.lineTo(x(i),y(m[key])):ctx.moveTo(x(i),y(m[key])));
-  ctx.stroke();ctx.setLineDash([]);
-  if(!dashed){
-   ctx.lineTo(x(data.length-1),top+ph);ctx.lineTo(x(0),top+ph);ctx.closePath();
-   ctx.fillStyle="#ffe6000d";ctx.fill();
-  }
- }
- path("budget","#65675e",1.7,true);
- path("actual","#ffe600",2.7);
- chartPoints=data.map((m,i)=>({x:x(i),y:y(m.actual),m}));
- data.forEach((m,i)=>{
-  if(!m.actual)return;
-  ctx.beginPath();ctx.arc(x(i),y(m.actual),3.2,0,Math.PI*2);
-  ctx.fillStyle="#ffe600";ctx.fill();
-  ctx.strokeStyle="#20211d";ctx.lineWidth=2;ctx.stroke();
- });
- canvas.onmousemove=e=>{
-  const r=canvas.getBoundingClientRect(),mx=e.clientX-r.left;
-  let nearest=chartPoints.reduce((a,b)=>Math.abs(b.x-mx)<Math.abs(a.x-mx)?b:a,chartPoints[0]);
-  if(!nearest)return;
-  const m=nearest.m;
-  tip.innerHTML=`<div class="tooltip-title">${m.name}</div>
-   <div class="tooltip-row"><span>Actual</span><b>${fmt(m.actual)}</b></div>
-   <div class="tooltip-row"><span>Budget</span><b>${fmt(m.budget)}</b></div>
-   <div class="tooltip-row"><span>Variance</span><b>${m.actual>=m.budget?"+":"−"}${fmt(Math.abs(m.actual-m.budget))}</b></div>`;
-  const tx=Math.max(0,Math.min(w-135,nearest.x-50));
-  tip.style.left=tx+"px";tip.style.top=Math.max(0,nearest.y-88)+"px";
-  tip.classList.add("show");
- };
- canvas.onmouseleave=()=>tip&&tip.classList.remove("show");
- canvas.onmousemove=canvas.onmousemove.bind(canvas);
-}
-function renderDonut(data){
- const departments=["Advisory","Consulting","Tax","Assurance"];
- const vals=departments.map(d=>({name:d,value:sum(data.filter(m=>m.dept===d),"revenue")}));
- const total=sum(vals,"value");
+function renderMix(){
+ const sums=departments.map(d=>managers.filter(m=>m.dept===d).reduce((s,m)=>s+m.rev,0));
+ const total=sums.reduce((a,b)=>a+b,0);
  let cursor=0;
- const stops=vals.map((v,i)=>{
-  const start=cursor;cursor+=total?v.value/total*100:0;
-  return `${colors[i]} ${start}% ${cursor}%`;
- });
- $("donut").style.background=`conic-gradient(${stops.join(",")})`;
- $("donutValue").textContent=total?"100%":"0%";
- $("donutLegend").innerHTML=vals.map((v,i)=>`
-  <div class="legend-item"><div class="legend-left"><i class="legend-dot" style="background:${colors[i]}"></i>${v.name}</div><strong>${total?pct(v.value,total).toFixed(1):"0.0"}%</strong></div>`).join("");
+ const stops=sums.map((v,i)=>{const start=cursor;cursor+=v/total*100;return `${colors[i]} ${start}% ${cursor}%`});
+ document.querySelector(".donut").style.background=`conic-gradient(${stops.join(",")})`;
+ $("donutTotal").textContent=money(total);
+ $("mix").innerHTML=departments.map((d,i)=>`<div class="mix-row">
+ <div><div class="mix-label"><i class="dot" style="background:${colors[i]}"></i>${d}</div>
+ <div class="mix-pct">${(sums[i]/total*100).toFixed(1)}%</div></div>
+ <span class="mix-amount">${money(sums[i])}</span></div>`).join("");
 }
-function bar(label,value,max,display,color=""){
- const width=Math.min(100,Math.max(0,max?value/max*100:0));
- return `<div><div class="bar-meta"><span>${esc(label)}</span><strong>${display}</strong></div>
- <div class="track"><div class="fill ${color}" data-width="${width}%" style="width:0"></div></div></div>`;
+function renderRisks(){
+ const list=filtered();
+ const below=list.filter(m=>achievement(m)<100);
+ const margin=list.filter(m=>m.margin<15);
+ const dso=list.filter(m=>m.dso>60);
+ const util=list.filter(m=>m.util<70);
+ const items=[
+ {level:"high",title:"Revenue below target",desc:`${below.length} manager${below.length===1?" is":"s are"} below budget.`,
+ meta:"Review pipeline, conversion and delivery.",detail:below.map(m=>m.name).join(", ")},
+ {level:"medium",title:"Margin pressure",desc:`${margin.length} manager${margin.length===1?" has":"s have"} margin below 15%.`,
+ meta:"Review pricing and delivery costs.",detail:margin.map(m=>m.name).join(", ")},
+ {level:"medium",title:"DSO above threshold",desc:`${dso.length} manager${dso.length===1?" has":"s have"} DSO above 60 days.`,
+ meta:"Accelerate collections and follow up.",detail:dso.map(m=>m.name).join(", ")},
+ {level:"low",title:"Utilization below target",desc:`${util.length} manager${util.length===1?" is":"s are"} below 70% utilization.`,
+ meta:"Review capacity and resource allocation.",detail:util.map(m=>m.name).join(", ")}
+ ];
+ $("riskList").innerHTML=items.map(x=>`<div class="risk-item" tabindex="0" data-risk="${x.title}">
+ <span class="severity ${x.level}">${x.level==="high"?"High":x.level==="medium"?"Medium":"Low"}</span>
+ <div><div class="risk-title">${x.title}</div><div class="risk-desc">${x.desc}</div>
+ <div class="risk-meta">${x.meta}</div></div><span class="arrow">›</span></div>`).join("");
 }
-function animateBars(){
- requestAnimationFrame(()=>document.querySelectorAll(".fill[data-width]").forEach(el=>el.style.width=el.dataset.width));
+function renderHealth(){
+ const list=filtered(),avg=arr=>arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0;
+ const revenue=list.reduce((s,m)=>s+m.rev,0);
+ const budget=list.reduce((s,m)=>s+m.budget,0);
+ const rows=[
+ ["Revenue achievement",budget?`${(revenue/budget*100).toFixed(1)}%`:"—"],
+ ["Average net margin",`${avg(list.map(m=>m.margin)).toFixed(1)}%`],
+ ["Average utilization",`${avg(list.map(m=>m.util)).toFixed(1)}%`],
+ ["Average DSO",`${avg(list.map(m=>m.dso)).toFixed(0)} days`],
+ ["Managers below budget",`${list.filter(m=>achievement(m)<100).length} of ${list.length}`],
+ ["Revenue per manager",list.length?money(revenue/list.length):"—"]
+ ];
+ $("health").innerHTML=rows.map(([a,b])=>`<div class="insight-row"><span class="insight-label">${a}</span><b class="insight-value">${b}</b></div>`).join("");
 }
-function renderDepartments(data){
- const names=["Advisory","Consulting","Tax","Assurance"];
- const groups=names.map(name=>({name,rows:data.filter(m=>m.dept===name)})).filter(g=>g.rows.length);
- $("departmentBars").innerHTML=groups.map(g=>{
-  const a=pct(sum(g.rows,"revenue"),sum(g.rows,"budget"));
-  return bar(g.name,a,120,a.toFixed(1)+"%",a>=100?"green":a<90?"red":"");
- }).join("");
- const achieved=data.filter(m=>achievement(m)>=100).length;
- $("performanceInsight").innerHTML=`<strong>${achieved} of ${data.length} managers</strong> meet or exceed their revenue target. Review margin, cash collection and delivery quality alongside revenue achievement.`;
- $("operationalBars").innerHTML=[
-  bar("Utilization",avg(data,"utilization"),100,avg(data,"utilization").toFixed(1)+"%"),
-  bar("Revenue attainment",pct(sum(data,"revenue"),sum(data,"budget")),120,pct(sum(data,"revenue"),sum(data,"budget"))),
-  bar("Managers at target",pct(achieved,data.length),100,achieved+" / "+data.length,"green")
- ].join("");
- animateBars();
+function renderKPIs(){
+ const list=filtered(),rev=list.reduce((s,m)=>s+m.rev,0);
+ const budget=list.reduce((s,m)=>s+m.budget,0);
+ const avg=key=>list.length?list.reduce((s,m)=>s+m[key],0)/list.length:0;
+ $("revenue").textContent=money(rev);
+ $("margin").textContent=avg("margin").toFixed(1)+"%";
+ $("util").textContent=avg("util").toFixed(1)+"%";
+ $("forecast").textContent=money(rev*1.145);
 }
-function initials(name){return name.split(" ").map(x=>x[0]).slice(0,2).join("").toUpperCase()}
-function managerRows(data,detail=false){
- const sorted=[...data].sort((a,b)=>achievement(b)-achievement(a));
- return sorted.map(m=>{
-  const s=status(m);
-  return `<tr data-manager="${esc(m.name)}" tabindex="0" role="button" aria-label="View ${esc(m.name)} details">
-  <td><div class="manager-cell"><div class="mini-avatar">${initials(m.name)}</div><div><div class="manager-name">${esc(m.name)}</div><div class="manager-dept">${m.dept}</div></div></div></td>
-  <td>${fmt(m.revenue)}</td>${detail?`<td>${fmt(m.profit)}</td><td>${margin(m).toFixed(1)}%</td><td>${percent(m.growth)}</td><td>${m.utilization}%</td><td>${m.clients}</td><td>${m.dso} d</td>`:
-  `<td>${fmt(m.budget)}</td><td><div class="achievement"><strong>${achievement(m).toFixed(1)}%</strong><div class="track"><div class="fill" style="width:${Math.min(100,achievement(m))}%"></div></div></div></td><td>${margin(m).toFixed(1)}%</td><td>${m.utilization}%</td>`}
-  <td><span class="pill ${s[1]}">${s[0]}</span></td></tr>`;
- }).join("");
-}
-function attachRowEvents(root){
- root.querySelectorAll("tr[data-manager]").forEach(tr=>{
-  const open=()=>openManager(tr.dataset.manager);
-  tr.addEventListener("click",open);
-  tr.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open()}});
- });
-}
-function renderTable(data){
- const q=$("search").value.trim().toLowerCase();
- const filtered=data.filter(m=>(m.name+" "+m.dept).toLowerCase().includes(q));
- $("managerTable").innerHTML=filtered.length?managerRows(filtered):`<tr><td colspan="7" style="text-align:center;color:#92948a;padding:28px">No matching managers found.</td></tr>`;
- $("rowCount").textContent=`${filtered.length} of ${data.length} managers`;
- attachRowEvents($("managerTable"));
-}
-function renderManagerPage(data){
- const achieved=data.filter(m=>achievement(m)>=100).length;
- const revenue=sum(data,"revenue"),profit=sum(data,"profit");
- $("managerKpis").innerHTML=[
-  kpi("Managers in scope",String(data.length),"Selected population|current filters","♙","neutral"),
-  kpi("At revenue target",achieved+" / "+data.length,pct(achieved,data.length)+"|of managers","◎",achieved?"up":"down"),
-  kpi("Aggregate margin",pct(profit,revenue),"Contribution / revenue|aggregate","◈","up"),
-  kpi("Average utilization",avg(data,"utilization").toFixed(1)+"%","Billable utilization|illustrative","◷","neutral")
- ].join("");
- const canvas=$("managerChart");if(!canvas)return;
- const w=canvas.parentElement.clientWidth,h=canvas.parentElement.clientHeight,dpr=devicePixelRatio||1;
- canvas.width=w*dpr;canvas.height=h*dpr;
- const ctx=canvas.getContext("2d");ctx.setTransform(dpr,0,0,dpr,0,0);
+function renderAll(){renderManagers();renderMix();renderRisks();renderHealth();renderKPIs();drawChart();}
+function drawChart(){
+ const canvas=$("revenueChart"),ctx=canvas.getContext("2d");
+ const rect=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+ if(!rect.width||!rect.height)return;
+ canvas.width=rect.width*dpr;canvas.height=rect.height*dpr;
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+ const w=rect.width,h=rect.height;
  ctx.clearRect(0,0,w,h);
- const sorted=[...data].sort((a,b)=>achievement(b)-achievement(a));
- const left=100,right=45,top=12,rowH= Math.min(36,(h-25)/Math.max(1,sorted.length));
- const max=Math.max(120,...sorted.map(achievement))*1.1,pw=w-left-right;
- ctx.font="10px Arial";
- for(let j=0;j<=4;j++){
-  const x=left+pw*j/4;
-  ctx.strokeStyle="#ffffff10";ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,h-12);ctx.stroke();
-  ctx.fillStyle="#85877d";ctx.textAlign="center";ctx.fillText(Math.round(max*j/4)+"%",x,h-5);
+ const pad={l:38,r:14,t:12,b:30},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b;
+ const actual=[.58,.70,.84,.95,.95,1.09,1.13,1.20,1.20,1.35,1.50,1.65];
+ const budget=[.45,.57,.68,.78,.80,.95,1.00,1.10,1.13,1.25,1.39,1.52];
+ const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+ const list=filtered(),factor=list.length?list.reduce((s,m)=>s+m.rev,0)/12400:1;
+ const p=$("period").value;
+ const count=p==="month"?1:p==="q"?3:12;
+ const scale=p==="month"?12:p==="q"?4:1;
+ const vals=actual.slice(0,count).map(v=>v*factor*scale);
+ const buds=budget.slice(0,count).map(v=>v*factor*scale);
+ const max=Math.max(2,...vals,...buds)*1.15;
+ const x=i=>pad.l+(count===1?cw/2:i*cw/(count-1));
+ const y=v=>pad.t+ch-(v/max)*ch;
+ ctx.font="10px -apple-system, sans-serif";
+ for(let i=0;i<=4;i++){
+   const v=max*i/4,yy=y(v);
+   ctx.strokeStyle="#252a26";ctx.lineWidth=1;
+   ctx.beginPath();ctx.moveTo(pad.l,yy);ctx.lineTo(w-pad.r,yy);ctx.stroke();
+   ctx.fillStyle="#9ba39b";ctx.textAlign="right";
+   ctx.fillText(v.toFixed(1),pad.l-7,yy+3);
  }
- sorted.forEach((m,i)=>{
-  const y=top+i*rowH;
-  ctx.textAlign="right";ctx.fillStyle="#b8b9b0";ctx.fillText(m.name.split(" ")[0],left-12,y+rowH*.58);
-  ctx.fillStyle="#33342d";ctx.fillRect(left,y+rowH*.22,pw,rowH*.48);
-  ctx.fillStyle=achievement(m)>=100?"#ffe600":achievement(m)<90?"#ff8282":"#a5c5ff";
-  ctx.fillRect(left,y+rowH*.22,pw*Math.min(1,achievement(m)/max),rowH*.48);
-  ctx.textAlign="left";ctx.fillStyle="#e4e4dc";ctx.fillText(achievement(m).toFixed(0)+"%",left+pw*Math.min(1,achievement(m)/max)+5,y+rowH*.58);
- });
- $("detailTable").innerHTML=managerRows(data,true);
- attachRowEvents($("detailTable"));
-}
-function renderTrends(data){
- const revenue=sum(data,"revenue"),budget=sum(data,"budget"),profit=sum(data,"profit");
- $("trendKpis").innerHTML=[
-  `<div class="card small-card"><div class="label">Revenue</div><div class="big">${fmtM(revenue)}</div><div class="label">Selected period</div></div>`,
-  `<div class="card small-card"><div class="label">Budget variance</div><div class="big" style="color:${revenue>=budget?"var(--green)":"var(--red)"}">${revenue>=budget?"+":"−"}${fmt(Math.abs(revenue-budget))}</div><div class="label">${pct(Math.abs(pct(revenue-budget,budget)))} absolute variance</div></div>`,
-  `<div class="card small-card"><div class="label">Contribution margin</div><div class="big">${pct(pct(profit,revenue))}</div><div class="label">Aggregate operating contribution</div></div>`
- ].join("");
- const ms=getMonths();
- $("monthlyTable").innerHTML=ms.map(m=>{
-  const v=m.actual-m.budget,variance=pct(v,m.budget);
-  return `<tr><td>${m.name}</td><td>${fmt(m.actual)}</td><td>${fmt(m.budget)}</td><td style="color:${v>=0?"var(--green)":"var(--red)"}">${v>=0?"+":"−"}${fmt(Math.abs(v))}</td><td>${percent(variance)}</td></tr>`;
- }).join("");
- drawLineChart("trendChart",ms);
-}
-function buildRisks(data){
- const risks=[];
- data.forEach(m=>{
-  if(achievement(m)<90)risks.push({level:"High",m,title:"Revenue materially below target",desc:`Achievement is ${achievement(m).toFixed(1)}% against budget.`,action:"Validate pipeline, delivery capacity and recovery forecast."});
-  else if(achievement(m)<100)risks.push({level:"Watch",m,title:"Revenue target gap",desc:`Achievement is ${achievement(m).toFixed(1)}%.`,action:"Review forecast and near-term opportunity conversion."});
-  if(margin(m)<20)risks.push({level:"Watch",m,title:"Contribution margin review",desc:`Illustrative margin is ${margin(m).toFixed(1)}%.`,action:"Check delivery cost, pricing and project scope."});
-  if(m.dso>60)risks.push({level:"High",m,title:"Potential collection delay",desc:`Illustrative DSO is ${m.dso} days.`,action:"Validate receivables aging and collection ownership."});
-  if(m.utilization<70)risks.push({level:"Watch",m,title:"Utilization below threshold",desc:`Illustrative utilization is ${m.utilization}%.`,action:"Review capacity, staffing and demand."});
-  if(m.growth<0)risks.push({level:"High",m,title:"Negative year-on-year growth",desc:`Illustrative growth is ${m.growth}%.`,action:"Investigate client retention and comparable-period drivers."});
- });
- return risks;
-}
-function renderRisks(data){
- const risks=buildRisks(data),high=risks.filter(r=>r.level==="High").length;
- $("riskKpis").innerHTML=[
-  kpi("Exceptions flagged",String(risks.length),"Rule-based alerts|illustrative","◇","neutral"),
-  kpi("High-priority flags",String(high),"Require review|not audited","! ",high?"down":"up"),
-  kpi("Managers in scope",String(data.length),"Current selection|reporting scope","♙","neutral"),
-  kpi("Collection threshold","60 days","DSO review trigger|demo rule","◷","neutral")
- ].join("");
- $("riskList").innerHTML=risks.length?risks.map(r=>`
-  <div class="risk-row"><div><span class="pill ${r.level==="High"?"bad":"warn"}">${r.level}</span></div>
-  <div><div class="risk-name">${esc(r.title)} <span class="small-muted">· ${esc(r.m.name)}</span></div>
-  <div class="risk-text">${esc(r.desc)}</div><div class="risk-action">Suggested review: ${esc(r.action)}</div></div></div>`).join("")
-  :`<div class="subtitle">No exceptions triggered under the current demo rules.</div>`;
-}
-function openManager(name){
- const m=getData().find(x=>x.name===name);if(!m)return;
- selectedManager=name;
- const s=status(m);
- $("modalRoot").innerHTML=`<div class="modal-backdrop" id="backdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-  <div class="modal-head"><div><div class="eyebrow">Manager intelligence / profile</div><h2 id="modalTitle">${esc(m.name)}</h2><div class="subtitle">${m.dept} · ${m.team} team members</div></div><button class="icon-btn" id="closeModal" aria-label="Close">✕</button></div>
-  <div style="margin-top:17px"><span class="pill ${s[1]}">${s[0]}</span><span class="small-muted" style="margin-left:9px">Illustrative manager record</span></div>
-  <div class="modal-grid">
-   <div class="modal-stat"><div class="label">Revenue</div><div class="value">${fmt(m.revenue)}</div><div class="small-muted">Budget ${fmt(m.budget)}</div></div>
-   <div class="modal-stat"><div class="label">Target achievement</div><div class="value">${achievement(m).toFixed(1)}%</div><div class="small-muted">Revenue against assigned budget</div></div>
-   <div class="modal-stat"><div class="label">Operating contribution</div><div class="value">${fmt(m.profit)}</div><div class="small-muted">Margin ${margin(m).toFixed(1)}%</div></div>
-   <div class="modal-stat"><div class="label">Growth</div><div class="value" style="color:${m.growth>=0?"var(--green)":"var(--red)"}">${percent(m.growth)}</div><div class="small-muted">Illustrative YoY</div></div>
-   <div class="modal-stat"><div class="label">Utilization</div><div class="value">${m.utilization}%</div><div class="track"><div class="fill" style="width:${m.utilization}%"></div></div></div>
-   <div class="modal-stat"><div class="label">Client engagements</div><div class="value">${m.clients}</div><div class="small-muted">Illustrative client count</div></div>
-   <div class="modal-stat"><div class="label">Days sales outstanding</div><div class="value">${m.dso} days</div><div class="small-muted">Illustrative DSO</div></div>
-   <div class="modal-stat"><div class="label">Target gap</div><div class="value">${m.revenue>=m.budget?"+":"−"}${fmt(Math.abs(m.revenue-m.budget))}</div><div class="small-muted">Revenue less budget</div></div>
-  </div>
-  <div class="insight"><strong>Review prompt:</strong> Consider revenue attainment, contribution margin, collections and delivery utilization together before assessing performance.</div>
- </div></div>`;
- $("closeModal").onclick=closeModal;
- $("backdrop").addEventListener("click",e=>{if(e.target.id==="backdrop")closeModal()});
- document.addEventListener("keydown",escModal,{once:true});
-}
-function escModal(e){if(e.key==="Escape")closeModal()}
-function closeModal(){$("modalRoot").innerHTML="";selectedManager=null}
-function toast(message){
- const el=$("toast");el.textContent=message;el.classList.add("show");
- clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2400);
-}
-function csvExport(){
- const data=getData();
- const headers=["Manager","Department","Revenue","Budget","Achievement %","Contribution","Margin %","Growth %","Utilization %","Clients","DSO days"];
- const rows=data.map(m=>[m.name,m.dept,m.revenue,m.budget,achievement(m).toFixed(1),m.profit,margin(m).toFixed(1),m.growth,m.utilization,m.clients,m.dso]);
- const quote=v=>'"'+String(v).replace(/"/g,'""')+'"';
- const csv=[headers,...rows].map(row=>row.map(quote).join(",")).join("\r\n");
- const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
- const url=URL.createObjectURL(blob),a=document.createElement("a");
- a.href=url;a.download="executive-performance-demo.csv";a.click();URL.revokeObjectURL(url);
- toast("CSV exported · demo data only");
+ const drawLine=(data,color,dashed)=>{
+   ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=dashed?1.4:2.5;
+   ctx.setLineDash(dashed?[4,4]:[]);
+   data.forEach((v,i)=>i?ctx.lineTo(x(i),y(v)):ctx.moveTo(x(i),y(v)));
+   ctx.stroke();ctx.setLineDash([]);
+   if(!dashed)data.forEach((v,i)=>{
+     ctx.beginPath();ctx.arc(x(i),y(v),3.1,0,Math.PI*2);
+     ctx.fillStyle=color;ctx.fill();
+   });
+ };
+ drawLine(buds,"#737b75",true);drawLine(vals,"#ffe600",false);
+ ctx.fillStyle="#bac1ba";ctx.textAlign="center";
+ months.slice(0,count).forEach((m,i)=>ctx.fillText(m,x(i),h-9));
+ if(chartPoint!==null&&chartPoint<count){
+   const i=chartPoint;
+   ctx.strokeStyle="#777f76";ctx.setLineDash([3,4]);
+   ctx.beginPath();ctx.moveTo(x(i),pad.t);ctx.lineTo(x(i),h-pad.b);ctx.stroke();
+   ctx.setLineDash([]);
+   ctx.beginPath();ctx.arc(x(i),y(vals[i]),5,0,Math.PI*2);
+   ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.stroke();
+ }
+ canvas.onmousemove=e=>{
+   const r=canvas.getBoundingClientRect(),mx=e.clientX-r.left;
+   chartPoint=Math.max(0,Math.min(count-1,Math.round((mx-pad.l)/cw*(count-1))));
+   canvas.style.cursor="crosshair";drawChart();
+ };
+ canvas.onmouseleave=()=>{chartPoint=null;canvas.style.cursor="default";drawChart()};
+ canvas.onclick=()=>{
+   if(chartPoint!==null)toast(`${months[chartPoint]} · Actual ${money(vals[chartPoint]*1000)} · Budget ${money(buds[chartPoint]*1000)}`);
+ };
 }
 const pages={
- overview:["The bigger picture.","A live-style view of financial health, manager delivery and business performance."],
- managers:["People behind performance.","Explore manager results, compare delivery and inspect individual scorecards."],
- trends:["Follow the numbers.","Understand revenue trajectories, target variances and contribution trends."],
- risks:["Focus on what matters.","Surface illustrative exceptions and suggested management review actions."]
+ overview:["Executive performance","Financial health, manager delivery and key business metrics."],
+ managers:["Manager performance","Review revenue, margin, utilization and manager delivery."],
+ trends:["Financial trends","Explore revenue trends and departmental contribution."],
+ risks:["Risk & actions","Identify performance gaps and prioritize follow-up."]
 };
-function showPage(name){
- currentPage=name;
- Object.keys(pages).forEach(p=>$(p+"Page").classList.toggle("hidden",p!==name));
- document.querySelectorAll(".nav[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===name));
- $("pageTitle").textContent=pages[name][0];
- $("pageSubtitle").textContent=pages[name][1];
- render();
- window.scrollTo({top:0,behavior:"smooth"});
-}
-function render(){
- const data=getData();
- renderKpis(data);renderDonut(data);renderDepartments(data);renderTable(data);
- renderManagerPage(data);renderTrends(data);renderRisks(data);
- if(currentPage==="overview")requestAnimationFrame(()=>drawLineChart("revenueChart",getMonths()));
-}
-document.querySelectorAll(".nav[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
-$("period").addEventListener("change",render);
-$("department").addEventListener("change",render);
-$("search").addEventListener("input",()=>renderTable(getData()));
-$("exportBtn").addEventListener("click",csvExport);
-$("printBtn").addEventListener("click",()=>window.print());
-$("refreshBtn").addEventListener("click",()=>{
- const btn=$("refreshBtn");btn.style.animation="spin .6s ease";
- render();toast("Dashboard refreshed · demo data");
- setTimeout(()=>btn.style.animation="",650);
+document.querySelectorAll(".nav button").forEach(btn=>btn.addEventListener("click",()=>{
+ document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+ btn.classList.add("active");
+ const page=btn.dataset.page;
+ $("pageTitle").textContent=pages[page][0];
+ $("pageSubtitle").textContent=pages[page][1];
+ if(page==="managers")$("managers").scrollIntoView({behavior:"smooth",block:"start"});
+ else if(page==="trends")$("trends").scrollIntoView({behavior:"smooth",block:"start"});
+ else if(page==="risks")$("risks").scrollIntoView({behavior:"smooth",block:"start"});
+ else $("main").scrollTo({top:0,behavior:"smooth"});
+}));
+$("department").addEventListener("change",renderAll);
+$("period").addEventListener("change",()=>{chartPoint=null;drawChart();toast("Reporting period updated.")});
+$("search").addEventListener("input",renderAll);
+$("viewAll").addEventListener("click",()=>{showAll=!showAll;renderManagers()});
+$("refresh").addEventListener("click",()=>{
+ $("updated").textContent=new Date().toLocaleString();
+ renderAll();toast("Dashboard refreshed using demo data.");
 });
-window.addEventListener("resize",()=>{
- clearTimeout(resizeTimer);
- resizeTimer=setTimeout(()=>{
-  if(currentPage==="overview")drawLineChart("revenueChart",getMonths());
-  if(currentPage==="trends")drawLineChart("trendChart",getMonths());
-  if(currentPage==="managers")renderManagerPage(getData());
- },150);
+$("managerRows").addEventListener("click",e=>{
+ const tr=e.target.closest("tr[data-name]");if(!tr)return;
+ const m=managers.find(m=>m.name===tr.dataset.name);
+ if(m)toast(`${m.name} · ${m.dept} · ${achievement(m).toFixed(1)}% of budget · ${m.dso} DSO days`);
 });
-$("reportDate").textContent="";
-render();
+$("riskList").addEventListener("click",e=>{
+ const item=e.target.closest("[data-risk]");if(!item)return;
+ const key=item.dataset.risk;
+ const list=filtered();
+ const relevant=key.includes("Revenue")?list.filter(m=>achievement(m)<100):
+ key.includes("Margin")?list.filter(m=>m.margin<15):
+ key.includes("DSO")?list.filter(m=>m.dso>60):list.filter(m=>m.util<70);
+ toast(key+": "+(relevant.map(m=>m.name).join(", ")||"No matching managers in this selection."));
+});
+$("riskList").addEventListener("keydown",e=>{
+ if(e.key==="Enter"||e.key===" "){e.preventDefault();e.target.closest("[data-risk]")?.click()}
+});
+window.addEventListener("resize",drawChart);
+$("updated").textContent=new Date().toLocaleString();
+renderAll();
 </script>
 </body>
 </html>
