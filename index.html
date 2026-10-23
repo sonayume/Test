@@ -1,1 +1,823 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Performance | Executive Dashboard</title>
+
+<style>
+:root {
+  --yellow: #FFE600;
+  --black: #202020;
+  --navy: #24272D;
+  --muted: #777B83;
+  --bg: #F4F5F7;
+  --white: #FFFFFF;
+  --green: #16845B;
+  --red: #C33E43;
+  --border: #E7E8EB;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--black);
+  font-size: 13px;
+}
+button, input, select { font: inherit; }
+button, select { cursor: pointer; }
+
+.topbar {
+  height: 66px;
+  background: var(--black);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  border-bottom: 4px solid var(--yellow);
+}
+.brand {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  color: var(--yellow);
+}
+.brand span {
+  display: block;
+  color: #fff;
+  letter-spacing: 1px;
+  font-size: 9px;
+  font-weight: 400;
+  margin-top: 2px;
+}
+.top-right { text-align: right; color: #ddd; font-size: 11px; }
+.top-right strong { display: block; color: white; margin-bottom: 4px; }
+
+.layout { display: flex; min-height: calc(100vh - 66px); }
+.sidebar {
+  width: 215px;
+  flex-shrink: 0;
+  background: var(--navy);
+  color: #ddd;
+  padding: 24px 13px;
+}
+.side-label {
+  color: #999DA5;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  padding: 12px 12px;
+}
+.nav {
+  padding: 12px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #D4D6DB;
+}
+.nav:hover, .nav.active {
+  background: #3C3F45;
+  color: white;
+}
+.nav.active { border-left: 3px solid var(--yellow); }
+.nav-icon { width: 17px; text-align: center; }
+.side-note {
+  border-top: 1px solid #45474C;
+  margin-top: 35px;
+  padding: 18px 10px;
+  color: #BFC1C7;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+main { flex: 1; min-width: 0; padding: 27px; }
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 23px;
+}
+h1 { font-size: 25px; margin: 0 0 8px; letter-spacing: -.7px; }
+.subtitle { color: var(--muted); font-size: 12px; line-height: 1.6; }
+.sample-badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 5px 8px;
+  background: #FFF3BF;
+  color: #725B00;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+}
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  align-items: center;
+}
+select, input {
+  border: 1px solid #DCDDDF;
+  border-radius: 5px;
+  background: white;
+  padding: 10px 11px;
+  color: #333;
+  outline-color: #C9B900;
+  max-width: 100%;
+}
+.btn {
+  background: var(--yellow);
+  border: 0;
+  padding: 11px 15px;
+  font-weight: bold;
+  border-radius: 4px;
+  color: #222;
+}
+.btn:hover { background: #E6D000; }
+.section-heading {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 27px 0 13px;
+}
+.section-heading small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: normal;
+  margin-left: 6px;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 13px;
+}
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 17px;
+  min-width: 0;
+  box-shadow: 0 1px 2px #00000005;
+}
+.kpi { border-top: 3px solid var(--yellow); }
+.kpi-label {
+  color: #656972;
+  font-size: 11px;
+  line-height: 1.5;
+  min-height: 30px;
+}
+.kpi-value {
+  font-size: clamp(20px, 2.1vw, 29px);
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin: 12px 0 9px;
+  overflow-wrap: anywhere;
+}
+.kpi-foot { color: var(--muted); font-size: 10px; line-height: 1.6; }
+.good { color: var(--green); font-weight: bold; }
+.bad { color: var(--red); font-weight: bold; }
+.neutral { color: #666; font-weight: bold; }
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  gap: 14px;
+}
+.card-title { font-size: 13px; font-weight: bold; }
+.card-subtitle { font-size: 11px; color: var(--muted); margin-top: 5px; }
+.chart-wrap { position: relative; width: 100%; height: 255px; margin-top: 17px; }
+canvas { width: 100%; height: 100%; display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; color: #666; font-size: 10px; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 5px; }
+.progress-row { margin-top: 24px; }
+.progress-meta { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 9px; font-size: 11px; }
+.progress-track { height: 8px; background: #ECEDEF; border-radius: 8px; overflow: hidden; }
+.progress-bar { height: 100%; background: #CFC000; border-radius: 8px; }
+.progress-bar.green { background: var(--green); }
+.progress-bar.red { background: var(--red); }
+.insight {
+  margin-top: 18px;
+  background: #FFFBE1;
+  border-left: 3px solid var(--yellow);
+  padding: 12px;
+  line-height: 1.7;
+  color: #514B25;
+  font-size: 11px;
+}
+.table-card { padding: 0; overflow: hidden; }
+.table-head {
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.table-head input { min-width: 190px; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+th {
+  background: #F7F7F8;
+  color: #676A71;
+  text-align: left;
+  font-size: 10px;
+  letter-spacing: .25px;
+  padding: 13px 15px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+td { padding: 15px; border-bottom: 1px solid #EEEEF0; font-size: 11px; }
+tbody tr:hover { background: #FFFEF3; }
+.manager { font-weight: bold; }
+.subtext { display: block; font-size: 10px; color: var(--muted); margin-top: 5px; }
+.pill {
+  display: inline-block;
+  padding: 5px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+}
+.pill.good { background: #E4F4EC; }
+.pill.bad { background: #FBE9E9; }
+.pill.warn { background: #FFF4D6; color: #8C6400; }
+.mini-track { width: 70px; height: 5px; background: #EEE; margin-top: 7px; border-radius: 5px; overflow: hidden; }
+.mini-fill { height: 100%; background: #C6B800; }
+.footer {
+  text-align: center;
+  padding: 28px 10px 10px;
+  font-size: 10px;
+  color: #858891;
+}
+.hidden { display: none !important; }
+.empty { padding: 25px; color: #777; text-align: center; }
+
+@media (max-width: 1100px) {
+  .kpis { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .sidebar { width: 175px; }
+  main { padding: 20px; }
+}
+@media (max-width: 760px) {
+  .sidebar { display: none; }
+  .topbar { padding: 0 17px; }
+  main { padding: 17px 12px; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .page-head { display: block; }
+  .filters { margin-top: 17px; }
+  .filters select { flex: 1; min-width: 120px; }
+  .kpis { gap: 9px; }
+  .card { padding: 13px; }
+  .chart-wrap { height: 220px; }
+}
+@media (max-width: 380px) {
+  .kpis { grid-template-columns: 1fr; }
+}
+@media print {
+  .sidebar, .filters, .table-head input, .btn { display: none !important; }
+  main { padding: 0; }
+  .layout { display: block; }
+  body { background: white; }
+  .card { break-inside: avoid; }
+}
+</style>
+</head>
+
+<body>
+<header class="topbar">
+  <div class="brand">EY<span>INSPIRED FINANCIAL PERFORMANCE</span></div>
+  <div class="top-right">
+    <strong>Executive Reporting Portal</strong>
+    <span id="reportDate"></span>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="side-label">PERFORMANCE</div>
+    <div class="nav active" data-page="overview"><span class="nav-icon">▦</span> Executive overview</div>
+    <div class="nav" data-page="managers"><span class="nav-icon">♙</span> Manager performance</div>
+    <div class="nav" data-page="trends"><span class="nav-icon">↗</span> Financial trends</div>
+    <div class="nav" data-page="risks"><span class="nav-icon">△</span> Risks & actions</div>
+    <div class="side-label" style="margin-top:22px">REPORTING</div>
+    <div class="nav" id="printNav"><span class="nav-icon">▤</span> Print / Save PDF</div>
+    <div class="side-note">
+      <strong>REPORTING PERIOD</strong><br>
+      FY 2026 · Illustrative data<br><br>
+      <strong>DATA CLASSIFICATION</strong><br>
+      Demo — not for decisions
+    </div>
+  </aside>
+
+  <main>
+    <div class="page-head">
+      <div>
+        <h1 id="pageTitle">Executive Overview</h1>
+        <div class="subtitle" id="pageSubtitle">
+          Financial health, manager accountability and business performance at a glance.
+        </div>
+        <div class="sample-badge">DEMO DATA · ALL FIGURES ARE ILLUSTRATIVE</div>
+      </div>
+      <div class="filters">
+        <select id="period">
+          <option value="YTD">Year to date</option>
+          <option value="Q1">Q1</option>
+          <option value="Q2">Q2</option>
+          <option value="Q3">Q3</option>
+          <option value="Q4">Q4</option>
+          <option value="FY">Full year</option>
+        </select>
+        <select id="department">
+          <option value="All">All departments</option>
+          <option value="Advisory">Advisory</option>
+          <option value="Consulting">Consulting</option>
+          <option value="Tax">Tax</option>
+          <option value="Assurance">Assurance</option>
+        </select>
+        <button class="btn" id="resetBtn">Reset filters</button>
+      </div>
+    </div>
+
+    <section id="overviewPage">
+      <div class="section-heading">Executive KPIs <small>Aggregated financial performance</small></div>
+      <div class="kpis" id="kpiGrid"></div>
+
+      <div class="section-heading">Performance analytics</div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Revenue: actual vs budget</div>
+          <div class="card-subtitle">Monthly revenue · illustrative values in $ millions</div>
+          <div class="chart-wrap"><canvas id="revenueChart"></canvas></div>
+          <div class="legend">
+            <span><i class="dot" style="background:#C9B900"></i>Actual</span>
+            <span><i class="dot" style="background:#D9DADF"></i>Budget</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Department target attainment</div>
+          <div class="card-subtitle">Revenue delivered against allocated targets</div>
+          <div id="departmentBars"></div>
+          <div class="insight" id="performanceInsight"></div>
+        </div>
+      </div>
+
+      <div class="section-heading">Manager scorecard <small>Ranked by revenue achievement</small></div>
+      <div class="card table-card">
+        <div class="table-head">
+          <div>
+            <div class="card-title">Manager performance summary</div>
+            <div class="card-subtitle">Select a manager to inspect their performance metrics.</div>
+          </div>
+          <input id="managerSearch" type="search" placeholder="Search manager or department...">
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th>MANAGER</th><th>DEPARTMENT</th><th>REVENUE</th>
+              <th>BUDGET</th><th>ACHIEVEMENT</th><th>PROFIT MARGIN</th>
+              <th>UTILIZATION</th><th>STATUS</th>
+            </tr></thead>
+            <tbody id="managerTable"></tbody>
+          </table>
+        </div>
+        <div id="tableCount" class="subtitle" style="padding:12px 16px"></div>
+      </div>
+    </section>
+
+    <section id="managersPage" class="hidden">
+      <div class="section-heading">Manager accountability</div>
+      <div class="kpis" id="managerKpis"></div>
+      <div class="card" style="margin-top:15px">
+        <div class="card-title">Manager performance distribution</div>
+        <div class="card-subtitle">Achievement against target, ranked from highest to lowest.</div>
+        <div class="chart-wrap"><canvas id="managerChart"></canvas></div>
+      </div>
+      <div class="section-heading">Detailed manager scorecard</div>
+      <div class="card table-card">
+        <div class="table-scroll">
+          <table><thead><tr>
+            <th>MANAGER</th><th>REVENUE</th><th>PROFIT</th><th>PROFIT MARGIN</th>
+            <th>GROWTH</th><th>UTILIZATION</th><th>CLIENTS</th><th>DSO</th><th>STATUS</th>
+          </tr></thead><tbody id="detailTable"></tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <section id="trendsPage" class="hidden">
+      <div class="section-heading">Financial trends</div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Revenue trend</div>
+          <div class="card-subtitle">Actual and budget by month ($ millions)</div>
+          <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Profitability overview</div>
+          <div class="card-subtitle">Revenue, profit and estimated cost composition</div>
+          <div id="profitBars"></div>
+          <div class="insight">Interpret margins alongside revenue growth, delivery costs and budget variances. Growth alone does not establish financial health.</div>
+        </div>
+      </div>
+      <div class="section-heading">Monthly financial snapshot</div>
+      <div class="card table-card"><div class="table-scroll">
+        <table><thead><tr><th>MONTH</th><th>REVENUE</th><th>BUDGET</th><th>VARIANCE</th><th>VARIANCE %</th></tr></thead>
+        <tbody id="monthlyTable"></tbody></table>
+      </div></div>
+    </section>
+
+    <section id="risksPage" class="hidden">
+      <div class="section-heading">Risk & action center</div>
+      <div class="kpis" id="riskKpis"></div>
+      <div class="section-heading">Exceptions requiring review</div>
+      <div class="card table-card"><div class="table-scroll">
+        <table><thead><tr><th>PRIORITY</th><th>MANAGER</th><th>DEPARTMENT</th><th>OBSERVATION</th><th>RECOMMENDED ACTION</th></tr></thead>
+        <tbody id="riskTable"></tbody></table>
+      </div></div>
+      <div class="insight" style="margin-top:15px">
+        These are rule-based demo alerts, not audited findings. Validate thresholds and investigate underlying data before assigning accountability.
+      </div>
+    </section>
+
+    <div class="footer">
+      Illustrative dashboard · Not affiliated with or endorsed by EY ·
+      Financial figures are fictional · Internal use template
+    </div>
+  </main>
+</div>
+
+<script>
+"use strict";
+
+// =====================================================
+// SAMPLE DATA — REPLACE THIS SECTION WITH YOUR DATA
+// Amounts are in USD thousands unless stated otherwise.
+// =====================================================
+
+const managers = [
+  {name:"Aarav Mehta", dept:"Advisory", revenue:1850, budget:1700, profit:425, growth:14, utilization:82, clients:12, dso:42, headcount:18},
+  {name:"Priya Sharma", dept:"Consulting", revenue:2100, budget:2200, profit:525, growth:9, utilization:78, clients:15, dso:48, headcount:24},
+  {name:"Rohan Iyer", dept:"Tax", revenue:1250, budget:1150, profit:375, growth:11, utilization:86, clients:21, dso:35, headcount:14},
+  {name:"Ananya Rao", dept:"Assurance", revenue:1650, budget:1800, profit:330, growth:-3, utilization:72, clients:18, dso:61, headcount:20},
+  {name:"Vikram Nair", dept:"Advisory", revenue:1950, budget:1850, profit:585, growth:18, utilization:88, clients:10, dso:39, headcount:16},
+  {name:"Ishita Kapoor", dept:"Consulting", revenue:1750, budget:1600, profit:350, growth:12, utilization:81, clients:13, dso:44, headcount:19},
+  {name:"Kabir Singh", dept:"Tax", revenue:980, budget:1100, profit:245, growth:2, utilization:69, clients:17, dso:66, headcount:12},
+  {name:"Meera Desai", dept:"Assurance", revenue:1450, budget:1400, profit:290, growth:7, utilization:80, clients:16, dso:46, headcount:17}
+];
+
+const monthly = [
+  {month:"Jan", actual:900, budget:920},
+  {month:"Feb", actual:950, budget:940},
+  {month:"Mar", actual:1050, budget:1000},
+  {month:"Apr", actual:1100, budget:1080},
+  {month:"May", actual:1150, budget:1120},
+  {month:"Jun", actual:1200, budget:1180},
+  {month:"Jul", actual:1250, budget:1230},
+  {month:"Aug", actual:1180, budget:1250},
+  {month:"Sep", actual:1300, budget:1280},
+  {month:"Oct", actual:0, budget:1320},
+  {month:"Nov", actual:0, budget:1350},
+  {month:"Dec", actual:0, budget:1400}
+];
+
+// These multipliers are only for demonstrating the period filter.
+// Replace with genuine period-specific source data in production.
+const periods = {
+  YTD: {factor:1, months:9},
+  Q1:  {factor:.31, months:3},
+  Q2:  {factor:.34, months:3},
+  Q3:  {factor:.35, months:3},
+  Q4:  {factor:.30, months:3},
+  FY:  {factor:1.38, months:12}
+};
+
+const $ = id => document.getElementById(id);
+const money = n => "$" + (n/1000).toLocaleString("en-US", {
+  minimumFractionDigits:2, maximumFractionDigits:2
+}) + "M";
+const pct = n => n.toFixed(1) + "%";
+const sum = (arr, key) => arr.reduce((s,x)=>s+x[key],0);
+const avg = (arr, key) => arr.length ? sum(arr,key)/arr.length : 0;
+const safePct = (a,b) => b ? a/b*100 : 0;
+
+let currentPage = "overview";
+
+function getData() {
+  const dept = $("department").value;
+  const period = periods[$("period").value];
+  return managers
+    .filter(m => dept === "All" || m.dept === dept)
+    .map(m => ({
+      ...m,
+      revenue: Math.round(m.revenue * period.factor),
+      budget: Math.round(m.budget * period.factor),
+      profit: Math.round(m.profit * period.factor)
+    }));
+}
+
+function actualMonths() {
+  const p = $("period").value;
+  if (p === "FY") return monthly;
+  if (p === "Q1") return monthly.slice(0,3);
+  if (p === "Q2") return monthly.slice(3,6);
+  if (p === "Q3") return monthly.slice(6,9);
+  if (p === "Q4") return monthly.slice(9,12);
+  return monthly.slice(0,9);
+}
+
+function status(m) {
+  const achievement = safePct(m.revenue,m.budget);
+  if (achievement >= 100 && m.utilization >= 75) return ["On track","good"];
+  if (achievement >= 90) return ["Needs attention","warn"];
+  return ["Below target","bad"];
+}
+
+function card(label, value, foot, cls="") {
+  return `<div class="card kpi">
+    <div class="kpi-label">${label}</div>
+    <div class="kpi-value">${value}</div>
+    <div class="kpi-foot ${cls}">${foot}</div>
+  </div>`;
+}
+
+function renderKPIs(data) {
+  const revenue = sum(data,"revenue");
+  const budget = sum(data,"budget");
+  const profit = sum(data,"profit");
+  const achievement = safePct(revenue,budget);
+  const margin = safePct(profit,revenue);
+  const costs = revenue-profit;
+  const count = data.length;
+  const previousGrowth = avg(data,"growth");
+  const outstanding = data.reduce((s,m)=>s+m.revenue*m.dso/90,0);
+
+  $("kpiGrid").innerHTML = [
+    card("Revenue",money(revenue),
+      `${achievement>=100?"▲":"▼"} ${pct(Math.abs(achievement-100))} vs budget`,achievement>=100?"good":"bad"),
+    card("Operating contribution",money(profit),
+      `${pct(margin)} contribution margin · illustrative`,margin>=20?"good":"neutral"),
+    card("Budget achievement",pct(achievement),
+      `${money(revenue-budget)} variance to budget`,achievement>=100?"good":"bad"),
+    card("Average manager growth",(previousGrowth>=0?"+":"")+pct(previousGrowth),
+      "Illustrative growth rate · not period-weighted",previousGrowth>=0?"good":"bad"),
+    card("Estimated delivery costs",money(costs),
+      "Revenue less operating contribution"),
+    card("Average utilization",pct(avg(data,"utilization")),
+      "Illustrative billable utilization"),
+    card("Active client engagements",sum(data,"clients").toLocaleString(),
+      `${count} managers represented`),
+    card("Indicative receivables",money(outstanding),
+      "Proxy estimate only · not actual AR ledger")
+  ].join("");
+}
+
+function renderManagerTable(data) {
+  const q = $("managerSearch").value.toLowerCase();
+  const filtered = data.filter(m=>
+    (m.name+" "+m.dept).toLowerCase().includes(q)
+  ).sort((a,b)=>safePct(b.revenue,b.budget)-safePct(a.revenue,a.budget));
+
+  $("managerTable").innerHTML = filtered.length ? filtered.map(m=>{
+    const a = safePct(m.revenue,m.budget);
+    const s = status(m);
+    return `<tr>
+      <td class="manager">${m.name}<span class="subtext">${m.headcount} team members</span></td>
+      <td>${m.dept}</td>
+      <td>${money(m.revenue)}</td>
+      <td>${money(m.budget)}</td>
+      <td><strong>${pct(a)}</strong><div class="mini-track"><div class="mini-fill" style="width:${Math.min(100,a)}%"></div></div></td>
+      <td>${pct(safePct(m.profit,m.revenue))}</td>
+      <td>${pct(m.utilization)}</td>
+      <td><span class="pill ${s[1]}">${s[0]}</span></td>
+    </tr>`;
+  }).join("") : `<tr><td colspan="8" class="empty">No matching managers.</td></tr>`;
+
+  $("tableCount").textContent = `Showing ${filtered.length} of ${data.length} managers`;
+}
+
+function drawBarChart(canvasId, labels, series, horizontal=false) {
+  const canvas = $(canvasId);
+  if (!canvas || !canvas.getContext) return;
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.round(rect.width*dpr);
+  canvas.height = Math.round(rect.height*dpr);
+  const ctx = canvas.getContext("2d");
+  ctx.scale(dpr,dpr);
+
+  const W=rect.width, H=rect.height;
+  ctx.clearRect(0,0,W,H);
+  const left=horizontal?83:35, right=12, top=12, bottom=30;
+  const plotW=W-left-right, plotH=H-top-bottom;
+  const all=series.flatMap(s=>s.values).filter(Number.isFinite);
+  const max=Math.max(1,...all)*1.16;
+
+  ctx.font="10px Arial";
+  ctx.fillStyle="#7B7E85";
+  ctx.strokeStyle="#ECEDEF";
+  ctx.lineWidth=1;
+
+  for(let i=0;i<=4;i++){
+    const val=max*i/4;
+    if(horizontal){
+      const x=left+plotW*i/4;
+      ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,H-bottom);ctx.stroke();
+      ctx.textAlign="center";ctx.fillText(Math.round(val)+"%",x,H-10);
+    } else {
+      const y=top+plotH*(1-i/4);
+      ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(W-right,y);ctx.stroke();
+      ctx.textAlign="right";
+      ctx.fillText((val>=1000?(val/1000).toFixed(1)+"k":Math.round(val)),left-6,y+3);
+    }
+  }
+
+  if(horizontal){
+    const slot=plotH/Math.max(1,labels.length);
+    labels.forEach((label,i)=>{
+      const y=top+i*slot;
+      ctx.textAlign="right";ctx.fillStyle="#5F626A";
+      ctx.fillText(label.length>13?label.slice(0,12)+"…":label,left-8,y+slot/2+3);
+      series.forEach((s,j)=>{
+        const v=s.values[i]||0;
+        const bw=plotW*Math.max(0,v)/max;
+        ctx.fillStyle=s.color;
+        ctx.fillRect(left,y+slot*(.18+j*.31),bw,Math.max(3,slot*.26));
+      });
+    });
+  } else {
+    const slot=plotW/Math.max(1,labels.length);
+    labels.forEach((label,i)=>{
+      const x=left+i*slot+slot/2;
+      series.forEach((s,j)=>{
+        const v=s.values[i]||0;
+        const bw=Math.min(19,slot*.31);
+        const bx=x+(j-(series.length-1)/2)*(bw+2)-bw/2;
+        const bh=plotH*Math.max(0,v)/max;
+        ctx.fillStyle=s.color;
+        ctx.fillRect(bx,top+plotH-bh,bw,bh);
+      });
+      ctx.fillStyle="#777B83";ctx.textAlign="center";
+      ctx.fillText(label,x,H-10);
+    });
+  }
+}
+
+function renderDepartments(data) {
+  const depts=["Advisory","Consulting","Tax","Assurance"];
+  $("departmentBars").innerHTML=depts.map(d=>{
+    const group=data.filter(m=>m.dept===d);
+    if(!group.length) return "";
+    const a=safePct(sum(group,"revenue"),sum(group,"budget"));
+    return `<div class="progress-row">
+      <div class="progress-meta"><span>${d}</span><strong>${pct(a)}</strong></div>
+      <div class="progress-track"><div class="progress-bar ${a>=100?"green":a<90?"red":""}" style="width:${Math.min(100,a)}%"></div></div>
+      <div class="card-subtitle">${money(sum(group,"revenue"))} revenue · ${group.length} managers</div>
+    </div>`;
+  }).join("");
+
+  const achieved=data.filter(m=>safePct(m.revenue,m.budget)>=100).length;
+  $("performanceInsight").textContent =
+    `${achieved} of ${data.length} managers meet or exceed their revenue target. Review both margin and delivery quality before drawing conclusions.`;
+}
+
+function renderManagerPage(data) {
+  const rev=sum(data,"revenue"), profit=sum(data,"profit");
+  const achieved=data.filter(m=>m.revenue>=m.budget).length;
+  $("managerKpis").innerHTML=[
+    card("Managers in scope",data.length,"Selected reporting population"),
+    card("Meeting revenue target",`${achieved} / ${data.length}`,pct(safePct(achieved,data.length))+" of managers"),
+    card("Average margin",pct(safePct(profit,rev)),"Aggregate profit / revenue"),
+    card("Average utilization",pct(avg(data,"utilization")),"Illustrative delivery metric")
+  ].join("");
+
+  const ranked=[...data].sort((a,b)=>safePct(b.revenue,b.budget)-safePct(a.revenue,a.budget));
+  drawBarChart("managerChart",ranked.map(m=>m.name.split(" ")[0]),
+    [{values:ranked.map(m=>safePct(m.revenue,m.budget)),color:"#C9B900"}],true);
+
+  $("detailTable").innerHTML=ranked.map(m=>{
+    const s=status(m);
+    return `<tr><td class="manager">${m.name}<span class="subtext">${m.dept}</span></td>
+    <td>${money(m.revenue)}</td><td>${money(m.profit)}</td>
+    <td>${pct(safePct(m.profit,m.revenue))}</td>
+    <td class="${m.growth>=0?"good":"bad"}">${m.growth>0?"+":""}${pct(m.growth)}</td>
+    <td>${pct(m.utilization)}</td><td>${m.clients}</td><td>${m.dso} days</td>
+    <td><span class="pill ${s[1]}">${s[0]}</span></td></tr>`;
+  }).join("");
+}
+
+function renderTrends(data) {
+  const ms=actualMonths();
+  drawBarChart("trendChart",ms.map(m=>m.month),[
+    {values:ms.map(m=>m.actual),color:"#C9B900"},
+    {values:ms.map(m=>m.budget),color:"#D9DADF"}
+  ]);
+
+  const revenue=sum(data,"revenue"), profit=sum(data,"profit");
+  const cost=revenue-profit;
+  const parts=[["Revenue",revenue],["Contribution",profit],["Estimated costs",cost]];
+  $("profitBars").innerHTML=parts.map(([label,value])=>{
+    const share=safePct(value,revenue);
+    return `<div class="progress-row">
+      <div class="progress-meta"><span>${label}</span><strong>${money(value)}</strong></div>
+      <div class="progress-track"><div class="progress-bar ${label==="Contribution"?"green":""}" style="width:${Math.min(100,share)}%"></div></div>
+      <div class="card-subtitle">${pct(share)} of revenue</div>
+    </div>`;
+  }).join("");
+
+  $("monthlyTable").innerHTML=ms.map(m=>{
+    const variance=m.actual-m.budget;
+    const variancePct=safePct(variance,m.budget);
+    return `<tr><td>${m.month}</td><td>${money(m.actual)}</td><td>${money(m.budget)}</td>
+      <td class="${variance>=0?"good":"bad"}">${money(variance)}</td>
+      <td class="${variance>=0?"good":"bad"}">${pct(variancePct)}</td></tr>`;
+  }).join("");
+}
+
+function renderRisks(data) {
+  const risks=[];
+  data.forEach(m=>{
+    const a=safePct(m.revenue,m.budget);
+    if(a<90) risks.push({priority:"High",m,observation:`Revenue achievement ${pct(a)}`,action:"Review pipeline, delivery capacity and recovery forecast."});
+    else if(a<100) risks.push({priority:"Medium",m,observation:`Revenue achievement ${pct(a)}`,action:"Review open opportunities and month-end conversion."});
+
+    if(safePct(m.profit,m.revenue)<20) risks.push({priority:"Medium",m,observation:`Margin ${pct(safePct(m.profit,m.revenue))}`,action:"Review project pricing, scope and delivery costs."});
+    if(m.dso>60) risks.push({priority:"High",m,observation:`DSO ${m.dso} days`,action:"Review aged receivables and collection ownership."});
+    if(m.utilization<70) risks.push({priority:"Medium",m,observation:`Utilization ${pct(m.utilization)}`,action:"Review staffing, demand forecasts and bench capacity."});
+    if(m.growth<0) risks.push({priority:"High",m,observation:`Growth ${pct(m.growth)}`,action:"Validate comparable-period performance and client retention."});
+  });
+
+  const high=risks.filter(r=>r.priority==="High").length;
+  $("riskKpis").innerHTML=[
+    card("Exceptions identified",risks.length,"Rule-based illustrative alerts"),
+    card("High-priority flags",high,"Require validation",high?"bad":"good"),
+    card("Managers in scope",data.length,"Current filter selection"),
+    card("Receivables threshold","60 days","Demo DSO review trigger")
+  ].join("");
+
+  $("riskTable").innerHTML=risks.length?risks.map(r=>
+    `<tr><td><span class="pill ${r.priority==="High"?"bad":"warn"}">${r.priority}</span></td>
+    <td class="manager">${r.m.name}</td><td>${r.m.dept}</td>
+    <td>${r.observation}</td><td style="white-space:normal;min-width:220px">${r.action}</td></tr>`
+  ).join(""):`<tr><td colspan="5" class="empty">No rule-based exceptions for this selection.</td></tr>`;
+}
+
+function render() {
+  const data=getData();
+  renderKPIs(data);
+  renderManagerTable(data);
+  renderDepartments(data);
+  renderManagerPage(data);
+  renderTrends(data);
+  renderRisks(data);
+
+  $("reportDate").textContent="Illustrative report · "+new Date().toLocaleDateString();
+}
+
+function showPage(page) {
+  currentPage=page;
+  const titles={
+    overview:["Executive Overview","Financial health, manager accountability and business performance at a glance."],
+    managers:["Manager Performance","Detailed accountability, profitability and operational delivery."],
+    trends:["Financial Trends","Revenue delivery, budget variances and profitability analysis."],
+    risks:["Risks & Actions","Rule-based financial and operational exceptions for review."]
+  };
+  Object.keys(titles).forEach(key=>{
+    $(key+"Page").classList.toggle("hidden",key!==page);
+  });
+  $("pageTitle").textContent=titles[page][0];
+  $("pageSubtitle").textContent=titles[page][1];
+  document.querySelectorAll(".nav[data-page]").forEach(n=>{
+    n.classList.toggle("active",n.dataset.page===page);
+  });
+  render();
+}
+
+document.querySelectorAll(".nav[data-page]").forEach(n=>{
+  n.addEventListener("click",()=>showPage(n.dataset.page));
+});
+$("period").addEventListener("change",render);
+$("department").addEventListener("change",render);
+$("managerSearch").addEventListener("input",()=>renderManagerTable(getData()));
+$("resetBtn").addEventListener("click",()=>{
+  $("period").value="YTD";
+  $("department").value="All";
+  $("managerSearch").value="";
+  showPage("overview");
+});
+$("printNav").addEventListener("click",()=>window.print());
+
+let resizeTimer;
+window.addEventListener("resize",()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(render,120);
+});
+
+render();
+</script>
+</body>
+</html>
